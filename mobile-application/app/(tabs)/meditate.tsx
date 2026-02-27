@@ -8,32 +8,39 @@ import { useHealthStore } from '@/store/health-store';
 import { useUserStore } from '@/store/user-store';
 import { evaluateRules } from '@/engine/rule-engine';
 import { meditationRules } from '@/engine/meditation-rules';
-import type { MeditationType, RuleContext, HealthSnapshot } from '@/types';
+import type { MeditationType, RuleContext, DailyHealthInput } from '@/types';
 
-const DEFAULT_HEALTH: HealthSnapshot = {
+const DEFAULT_HEALTH: DailyHealthInput = {
     date: new Date().toISOString().slice(0, 10),
-    steps: 5000,
-    sleepHours: 7,
-    sedentaryMinutes: 60,
-    hydrationGlasses: 4,
+    sleep_hours: 7,
+    sleep_quality: 3,
+    sleep_disturbances: 0,
+    exercise_minutes: 20,
+    sedentary_hours: 4,
+    water_ml: 1500,
+    stress_level: 2,
+    fatigue_level: 2,
 };
 
 export default function MeditateScreen() {
     const router = useRouter();
     const [duration, setDuration] = useState(10);
     const { sessions, getAverageRating, getSessionCount, getTotalMinutes } = useMeditationStore();
-    const health = useHealthStore((s) => s.getLatestSnapshot()) ?? DEFAULT_HEALTH;
+    const latestRecord = useHealthStore((s) => s.getLatestRecord());
+    const healthRecords = useHealthStore((s) => s.getRecordsForDays(30));
+    const health = latestRecord?.input ?? DEFAULT_HEALTH;
     const profile = useUserStore((s) => s.profile);
 
     const recommendations = useMemo(() => {
         const ctx: RuleContext = {
             user: profile,
             health,
+            healthRecords,
             focusSessions: [],
             meditationSessions: sessions,
         };
         return evaluateRules(meditationRules, ctx);
-    }, [profile, health, sessions]);
+    }, [profile, health, healthRecords, sessions]);
 
     // Determine recommended type from engine
     const recommendedType: MeditationType | null = useMemo(() => {

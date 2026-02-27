@@ -45,7 +45,7 @@ export const focusRules: Rule[] = [
         id: 'focus-rest-needed',
         name: 'Rest After Low Sleep',
         evaluate: (ctx) => {
-            if (ctx.health.sleepHours < 6) {
+            if (ctx.health.sleep_hours < 6) {
                 return {
                     id: 'focus-rest',
                     type: 'recovery',

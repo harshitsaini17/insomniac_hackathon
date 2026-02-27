@@ -1,52 +1,158 @@
+/**
+ * ASTRA Health Module — Zustand Store
+ * Persists daily entries + computed scores via AsyncStorage.
+ */
+
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
-import { zustandStorage } from './storage';
-import type { HealthSnapshot, Recommendation } from '@/types';
+import { zustandStorage, generateId } from './storage';
+import type {
+    DailyHealthInput,
+    ComputedHealthScores,
+    HealthDayRecord,
+    Recommendation,
+    HealthFlag,
+    AttentionCapacity,
+    RuleContext,
+} from '@/types';
+import { computeDayScores, mapReadinessToAttention } from '@/engine/health-scores';
+import { runHealthRules } from '@/engine/health-rules';
+import { clamp } from '@/engine/health-normalizers';
+import {
+    computeRollingAverage,
+    detectTrend,
+    checkChronicLow,
+    getRecentRecords,
+} from '@/engine/health-trends';
+import { useUserStore } from './user-store';
 
 interface HealthState {
-    snapshots: HealthSnapshot[];
-    recommendations: Recommendation[];
-    updateSnapshot: (snapshot: HealthSnapshot) => void;
-    getLatestSnapshot: () => HealthSnapshot | null;
-    setRecommendations: (recs: Recommendation[]) => void;
-}
+    records: HealthDayRecord[];
 
-const emptySnapshot: HealthSnapshot = {
-    date: new Date().toISOString().slice(0, 10),
-    steps: 0,
-    sleepHours: 7,
-    sedentaryMinutes: 0,
-    hydrationGlasses: 0,
-};
+    /** Add or update a daily input → recompute scores & rules. */
+    addDailyInput: (input: DailyHealthInput) => void;
+
+    /** Get the latest day record. */
+    getLatestRecord: () => HealthDayRecord | null;
+
+    /** Get records for the last N days. */
+    getRecordsForDays: (days: number) => HealthDayRecord[];
+
+    /** Get latest health output for Focus Trainer consumption. */
+    getLatestHealthOutput: () => {
+        CognitiveReadiness: number;
+        AttentionCapacity: AttentionCapacity;
+        flags: HealthFlag[];
+    } | null;
+
+    /** Get rolling averages for a field. */
+    getRollingAvg: (field: string, days: number) => number | null;
+}
 
 export const useHealthStore = create<HealthState>()(
     persist(
         (set, get) => ({
-            snapshots: [],
-            recommendations: [],
+            records: [],
 
-            updateSnapshot: (snapshot) => {
+            addDailyInput: (input: DailyHealthInput) => {
+                // 1. Compute scores
+                let computed = computeDayScores(input);
+
+                // 2. Build rule context
+                const profile = useUserStore.getState().profile;
+                const existingRecords = get().records;
+                const ctx: RuleContext = {
+                    user: profile,
+                    health: input,
+                    healthRecords: existingRecords,
+                    focusSessions: [],
+                    meditationSessions: [],
+                };
+
+                // 3. Run rules
+                const ruleResult = runHealthRules(ctx, computed);
+
+                // 4. Apply readiness boost
+                if (ruleResult.readinessBoost) {
+                    const boosted = clamp(
+                        computed.CognitiveReadiness + ruleResult.readinessBoost,
+                        0,
+                        100
+                    );
+                    computed = {
+                        ...computed,
+                        CognitiveReadiness: boosted,
+                        AttentionCapacity: mapReadinessToAttention(boosted),
+                    };
+                }
+
+                // 5. Apply attention override
+                if (ruleResult.attentionOverride) {
+                    const overrideAttention = mapReadinessToAttention(
+                        ruleResult.attentionOverride === 'recovery'
+                            ? 0
+                            : ruleResult.attentionOverride === 'light'
+                                ? 40
+                                : ruleResult.attentionOverride === 'moderate'
+                                    ? 60
+                                    : 80
+                    );
+                    computed = {
+                        ...computed,
+                        AttentionCapacity: overrideAttention,
+                    };
+                }
+
+                const record: HealthDayRecord = {
+                    input,
+                    computed,
+                    flags: ruleResult.flags,
+                    recommendations: ruleResult.recommendations,
+                };
+
+                // 6. Upsert by date
                 set((s) => {
-                    const existing = s.snapshots.findIndex((sn) => sn.date === snapshot.date);
-                    if (existing >= 0) {
-                        const updated = [...s.snapshots];
-                        updated[existing] = snapshot;
-                        return { snapshots: updated };
+                    const idx = s.records.findIndex(
+                        (r) => r.input.date === input.date
+                    );
+                    if (idx >= 0) {
+                        const updated = [...s.records];
+                        updated[idx] = record;
+                        return { records: updated };
                     }
-                    return { snapshots: [...s.snapshots, snapshot] };
+                    return { records: [...s.records, record] };
                 });
             },
 
-            getLatestSnapshot: () => {
-                const snaps = get().snapshots;
-                return snaps.length > 0 ? snaps[snaps.length - 1] : null;
+            getLatestRecord: () => {
+                const recs = get().records;
+                if (recs.length === 0) return null;
+                return recs.reduce((latest, r) =>
+                    r.input.date > latest.input.date ? r : latest
+                );
             },
 
-            setRecommendations: (recs) => set({ recommendations: recs }),
+            getRecordsForDays: (days: number) => {
+                return getRecentRecords(get().records, days);
+            },
+
+            getLatestHealthOutput: () => {
+                const latest = get().getLatestRecord();
+                if (!latest) return null;
+                return {
+                    CognitiveReadiness: latest.computed.CognitiveReadiness,
+                    AttentionCapacity: latest.computed.AttentionCapacity,
+                    flags: latest.flags,
+                };
+            },
+
+            getRollingAvg: (field: string, days: number) => {
+                return computeRollingAverage(get().records, field, days);
+            },
         }),
         {
             name: 'astra-health',
             storage: createJSONStorage(() => zustandStorage),
-        },
-    ),
+        }
+    )
 );

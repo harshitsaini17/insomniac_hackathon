@@ -5,7 +5,7 @@ export const meditationRules: Rule[] = [
         id: 'med-low-sleep-breathing',
         name: 'Breathing for Low Sleep',
         evaluate: (ctx) => {
-            if (ctx.health.sleepHours < 6) {
+            if (ctx.health.sleep_hours < 6) {
                 return {
                     id: 'med-breathing',
                     type: 'meditation',
@@ -22,7 +22,7 @@ export const meditationRules: Rule[] = [
         id: 'med-low-hrv-yoga-nidra',
         name: 'Yoga Nidra for Low HRV',
         evaluate: (ctx) => {
-            if (ctx.health.hrv !== undefined && ctx.health.hrv < 40) {
+            if (ctx.health.hrv_rmssd_ms !== undefined && ctx.health.hrv_rmssd_ms < 40) {
                 return {
                     id: 'med-yoga-nidra',
                     type: 'recovery',
@@ -39,7 +39,7 @@ export const meditationRules: Rule[] = [
         id: 'med-sedentary-mindfulness',
         name: 'Mindfulness After Sedentary',
         evaluate: (ctx) => {
-            if (ctx.health.sedentaryMinutes > 120) {
+            if (ctx.health.sedentary_hours > 2) {
                 return {
                     id: 'med-mindfulness',
                     type: 'meditation',
