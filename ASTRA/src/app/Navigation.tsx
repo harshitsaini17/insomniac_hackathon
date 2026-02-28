@@ -109,6 +109,14 @@ export default function Navigation() {
                     ),
                 }}
             />
+            {/* Hidden screens accessible via navigation */}
+            <Tab.Screen
+                name="Heatmap"
+                component={HeatmapScreen}
+                options={{
+                    tabBarButton: () => null,
+                }}
+            />
         </Tab.Navigator>
     );
 }

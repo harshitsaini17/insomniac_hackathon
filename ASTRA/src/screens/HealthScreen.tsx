@@ -21,7 +21,7 @@ import { RecommendationCard } from '@/components/health/RecommendationCard';
 
 import type { DailyHealthInput } from '@/types';
 
-export default function HealthScreen() {
+export default function HealthScreen({ navigation }: any) {
     const [showForm, setShowForm] = useState(false);
     const addDailyInput = useHealthStore((s) => s.addDailyInput);
     const latestRecord = useHealthStore((s) => s.getLatestRecord());
@@ -124,7 +124,13 @@ export default function HealthScreen() {
                     <AttentionRecommendation
                         attention={latestRecord.computed.AttentionCapacity}
                         onStartSession={() => {
-                            // TODO: Navigate to focus or meditate session
+                            if (latestRecord.computed.AttentionCapacity.level === 'recovery') {
+                                // @ts-ignore
+                                navigation.navigate('Meditate');
+                            } else {
+                                // @ts-ignore
+                                navigation.navigate('FocusSession');
+                            }
                         }}
                     />
                 )}
