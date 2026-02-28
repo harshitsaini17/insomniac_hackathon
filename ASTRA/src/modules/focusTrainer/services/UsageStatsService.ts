@@ -1,24 +1,53 @@
 // ─────────────────────────────────────────────────────────────────────────────
 // UsageStats Service — Android UsageStatsManager Bridge
-// Abstraction layer with mock data for development
+// Uses native AstraTrackingModule when available, falls back to mock data
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { AppUsageSession, AppDailyStats, TimeOfDay } from '../models/types';
 import { getTimeOfDay } from '../math/normalize';
+import {
+    isNativeModuleAvailable,
+    getTodaySessions as getNativeSessions,
+    hasUsagePermission as nativeHasPermission,
+    requestUsagePermission as nativeRequestPermission,
+} from '../../backgroundTracking/NativeTrackingBridge';
 
 // ── Native Module Interface ──────────────────────────────────────────────────
-// In production, this would bridge to NativeModules.UsageStatsModule
-// For now, we provide realistic mock data
 
 /**
  * Get app usage sessions for a time range.
- * In production: bridges to Android UsageStatsManager.queryUsageStats()
+ * Uses native AstraTrackingModule when available, otherwise mock data.
  */
 export async function getUsageSessions(
     startTime: number,
     endTime: number,
 ): Promise<AppUsageSession[]> {
-    // TODO: Replace with NativeModules.UsageStatsModule.queryUsageStats(startTime, endTime)
+    // Try native module first
+    if (isNativeModuleAvailable()) {
+        try {
+            const nativeSessions = await getNativeSessions();
+            return nativeSessions
+                .filter(s => s.startTime >= startTime && s.startTime <= endTime)
+                .map(s => {
+                    const date = new Date(s.startTime);
+                    return {
+                        appName: s.appName,
+                        packageName: s.packageName,
+                        startTime: s.startTime,
+                        endTime: s.endTime,
+                        duration: s.duration,
+                        switchCount: 0,
+                        unlockCount: 0,
+                        timeOfDay: getTimeOfDay(date.getHours()),
+                        dayOfWeek: date.getDay(),
+                    };
+                });
+        } catch (e) {
+            console.warn('[UsageStats] Native query failed, falling back to mock:', e);
+        }
+    }
+
+    // Fallback to mock
     return generateMockSessions(startTime, endTime);
 }
 
@@ -57,10 +86,12 @@ export async function getDailyAppStats(
 
 /**
  * Check if usage stats permission is granted.
- * In production: bridges to native AppOpsManager check.
+ * Uses native module when available.
  */
 export async function hasUsageStatsPermission(): Promise<boolean> {
-    // TODO: Replace with NativeModules.UsageStatsModule.checkPermission()
+    if (isNativeModuleAvailable()) {
+        return nativeHasPermission();
+    }
     return true; // Mock: always granted
 }
 
@@ -68,7 +99,10 @@ export async function hasUsageStatsPermission(): Promise<boolean> {
  * Request usage stats permission (opens system settings).
  */
 export async function requestUsageStatsPermission(): Promise<void> {
-    // TODO: Replace with NativeModules.UsageStatsModule.requestPermission()
+    if (isNativeModuleAvailable()) {
+        await nativeRequestPermission();
+        return;
+    }
     console.log('[UsageStats] Requesting permission...');
 }
 
