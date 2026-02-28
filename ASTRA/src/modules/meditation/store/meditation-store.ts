@@ -147,6 +147,11 @@ export const useMeditationStore = create<MeditationState>()(
 
                 set((s) => ({ sessionRecords: [...s.sessionRecords, full] }));
 
+                // Save to native SQLite
+                import('../../../database/repository').then(({ insertMeditationSession }) => {
+                    insertMeditationSession(full).catch(console.error);
+                });
+
                 // Notify listeners
                 for (const listener of completionListeners) {
                     try { listener(full); } catch (_) { /* swallow */ }

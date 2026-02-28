@@ -4,7 +4,7 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React, { useEffect, useState } from 'react';
-import { StatusBar, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Navigation from './Navigation';
 import { initializeDatabase } from '../database/repository';
@@ -16,6 +16,7 @@ import {
     getUserProfile,
 } from '../storage/mmkvStore';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import SplashScreen from '../screens/SplashScreen';
 import { AstraColors } from '../constants/astraTheme';
 
 export default function App() {
@@ -24,12 +25,9 @@ export default function App() {
     const setPersonality = useFocusStore(s => s.setPersonality);
     const setInitialized = useFocusStore(s => s.setInitialized);
 
-    useEffect(() => {
-        initializeApp();
-    }, []);
-
     const initializeApp = async () => {
         try {
+            console.log('[App] Starting initialization...');
             // 1. Initialize database
             await initializeDatabase();
 
@@ -38,7 +36,6 @@ export default function App() {
 
             if (!onboarded) {
                 setShowOnboarding(true);
-                setIsLoading(false);
                 return;
             }
 
@@ -59,11 +56,14 @@ export default function App() {
 
             // 5. Mark initialized
             setInitialized(true);
-            setIsLoading(false);
         } catch (err) {
             console.error('[App] Initialization error:', err);
-            setIsLoading(false);
         }
+    };
+
+    const handleSplashComplete = async () => {
+        await initializeApp();
+        setIsLoading(false);
     };
 
     const handleOnboardingComplete = async () => {
@@ -86,12 +86,10 @@ export default function App() {
 
     if (isLoading) {
         return (
-            <View style={styles.loading}>
+            <>
                 <StatusBar barStyle="dark-content" backgroundColor={AstraColors.background} />
-                <Text style={styles.logo}>ASTRA</Text>
-                <ActivityIndicator size="large" color={AstraColors.primary} />
-                <Text style={styles.loadingText}>Initializing Focus Trainer...</Text>
-            </View>
+                <SplashScreen onInitializationComplete={handleSplashComplete} />
+            </>
         );
     }
 
@@ -111,24 +109,3 @@ export default function App() {
         </NavigationContainer>
     );
 }
-
-const styles = StyleSheet.create({
-    loading: {
-        flex: 1,
-        backgroundColor: AstraColors.background,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    logo: {
-        fontSize: 48,
-        fontWeight: '800',
-        color: AstraColors.primary,
-        letterSpacing: 6,
-        marginBottom: 24,
-    },
-    loadingText: {
-        fontSize: 14,
-        color: AstraColors.mutedForeground,
-        marginTop: 16,
-    },
-});

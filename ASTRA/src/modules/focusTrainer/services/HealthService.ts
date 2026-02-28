@@ -3,19 +3,26 @@
 // Abstracts sleep, HRV, steps, and activity data
 // ─────────────────────────────────────────────────────────────────────────────
 
+import { getLatestHealthSignals } from '../../../database/repository';
 import { HealthSignals } from '../models/types';
 import { minMaxNormalize } from '../math/normalize';
 import { NORM_RANGES } from '../models/constants';
 
 /**
  * Get the latest health signals.
- * In production: bridges to Health Connect API.
+ * Reads from the ASTRA SQLite database populated by the user via the Health Module.
+ * If no data exists, creates a basic fallback dummy structure (so UI does not crash).
  */
 export async function getHealthSignals(): Promise<HealthSignals> {
-    // TODO: Replace with HealthConnect native module calls:
-    // - readSleepSessions()
-    // - readHeartRateVariability()
-    // - readStepsCount()
+    try {
+        const latest = await getLatestHealthSignals();
+        if (latest) {
+            return latest;
+        }
+    } catch (e) {
+        console.warn('[HealthService] Failed to get real health signals, using fallback', e);
+    }
+    // Fallback if no user entries exist yet
     return generateMockHealthSignals();
 }
 

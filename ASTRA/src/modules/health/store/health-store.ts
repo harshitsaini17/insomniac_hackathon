@@ -122,6 +122,19 @@ export const useHealthStore = create<HealthState>()(
                     }
                     return { records: [...s.records, record] };
                 });
+
+                // 7. Sync to SQLite for Cross-Module Queries (Focus Trainer)
+                import('../../../database/repository').then(({ insertHealthSignals }) => {
+                    insertHealthSignals({
+                        sleepDuration: input.sleep_hours,
+                        sleepQuality: input.sleep_quality / 5, // normalized to 0-1
+                        hrv: input.hrv_rmssd_ms || 40,
+                        hrvNormalized: (input.hrv_rmssd_ms || 40) / 100,
+                        steps: (input.exercise_minutes || 0) * 100, // mock step count based on exercise
+                        activityLevel: input.exercise_minutes ? Math.min(input.exercise_minutes / 60, 1) : 0,
+                        timestamp: Date.now(),
+                    }).catch(console.error);
+                });
             },
 
             getLatestRecord: () => {

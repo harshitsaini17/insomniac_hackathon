@@ -19,11 +19,13 @@ import { computeAFI } from '../modules/focusTrainer/math/attentionFragmentation'
 import { computeDistractivenessScores } from '../modules/focusTrainer/math/distractivenessScore';
 import { computeCRS, getCRSSuggestion } from '../modules/focusTrainer/math/cognitiveReadiness';
 import { computeImpulsivityIndex } from '../modules/focusTrainer/math/personalityStrictness';
+import { getCompletedSessionsToday } from '../database/repository';
 import { AstraColors, AstraCard, AstraShadow, AstraRadius } from '../constants/astraTheme';
 
 const { width } = Dimensions.get('window');
 
 export default function DashboardScreen({ navigation }: any) {
+    const [dbCompletedSessions, setDbCompletedSessions] = React.useState(0);
     const {
         currentAFI,
         currentCRS,
@@ -31,7 +33,6 @@ export default function DashboardScreen({ navigation }: any) {
         distractiveApps,
         activeGoal,
         isInFocusSession,
-        completedSessionsToday,
         personality,
         setAFI,
         setCRS,
@@ -54,6 +55,10 @@ export default function DashboardScreen({ navigation }: any) {
             const health = await getHealthSignals();
             const crs = computeCRS(health, afi.score);
             setCRS(crs);
+
+            // Fetch real DB completed sessions
+            const sessionCount = await getCompletedSessionsToday();
+            setDbCompletedSessions(sessionCount);
 
             // Compute strictness
             const strictness = computeImpulsivityIndex(personality);
@@ -167,7 +172,7 @@ export default function DashboardScreen({ navigation }: any) {
                 <Text style={styles.cardLabel}>TODAY</Text>
                 <View style={styles.statsRow}>
                     <View style={styles.statItem}>
-                        <Text style={styles.statValue}>{completedSessionsToday}</Text>
+                        <Text style={styles.statValue}>{dbCompletedSessions}</Text>
                         <Text style={styles.statLabel}>Sessions</Text>
                     </View>
                     <View style={styles.statItem}>

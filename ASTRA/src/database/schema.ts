@@ -142,6 +142,20 @@ export const CREATE_TABLES: string[] = [
     app_package TEXT,
     session_duration INTEGER
   )`,
+
+  // ── Meditation Sessions ─────────────────────────────────────────────────
+  `CREATE TABLE IF NOT EXISTS meditation_sessions (
+    id TEXT PRIMARY KEY,
+    date TEXT NOT NULL,
+    type TEXT NOT NULL,
+    intent TEXT NOT NULL,
+    duration_seconds INTEGER NOT NULL,
+    completed INTEGER NOT NULL,
+    rating INTEGER NOT NULL,
+    pre_hrv REAL,
+    post_hrv REAL,
+    efficacy_marked INTEGER NOT NULL
+  )`,
 ];
 
 /**

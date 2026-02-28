@@ -11,11 +11,12 @@ import {
     Switch,
     TouchableOpacity,
     Alert,
+    TextInput,
 } from 'react-native';
 import { useFocusStore } from '../modules/focusTrainer/store/focusStore';
 import { computeImpulsivityIndex } from '../modules/focusTrainer/math/personalityStrictness';
 import { PersonalityProfile, BlockingLevel } from '../modules/focusTrainer/models/types';
-import { setPersonalityProfile, setModuleEnabled } from '../storage/mmkvStore';
+import { setPersonalityProfile, setModuleEnabled, getUserProfile, setUserProfile } from '../storage/mmkvStore';
 import { AstraColors, AstraCard, AstraRadius } from '../constants/astraTheme';
 
 export default function SettingsScreen() {
@@ -35,6 +36,19 @@ export default function SettingsScreen() {
     const [usageTracking, setUsageTracking] = useState(true);
     const [healthTracking, setHealthTracking] = useState(true);
     const [cogTraining, setCogTraining] = useState(true);
+
+    const [userProfile, setUserProfileState] = useState(getUserProfile());
+    const [goalText, setGoalText] = useState(userProfile?.goalText || '');
+
+    // ── Save goal text ──────────────────────────────────────────────────────
+    const handleSaveGoal = () => {
+        if (userProfile && goalText.trim()) {
+            const updatedProfile = { ...userProfile, goalText: goalText.trim() };
+            setUserProfile(updatedProfile);
+            setUserProfileState(updatedProfile);
+            Alert.alert('Saved', 'Your primary goal has been updated.');
+        }
+    };
 
     // ── Update personality ──────────────────────────────────────────────────
     const updatePersonality = useCallback(
@@ -110,6 +124,32 @@ export default function SettingsScreen() {
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
             <Text style={styles.caption}>PREFERENCES</Text>
             <Text style={styles.title}>Settings</Text>
+
+            {/* ── User Profile ──────────────────────────────────────────────── */}
+            {userProfile && (
+                <View style={styles.card}>
+                    <Text style={styles.sectionTitle}>Your Goal</Text>
+                    <Text style={styles.sectionDesc}>
+                        Update your core objective to recalibrate your recommendations.
+                    </Text>
+
+                    <TextInput
+                        style={styles.textInput}
+                        value={goalText}
+                        onChangeText={setGoalText}
+                        multiline
+                        placeholder="What is your primary goal right now?"
+                        placeholderTextColor={AstraColors.mutedForeground}
+                    />
+
+                    <TouchableOpacity
+                        style={[styles.playBtn, { marginTop: 12 }]}
+                        onPress={handleSaveGoal}
+                    >
+                        <Text style={styles.playBtnText}>Update Goal</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
 
             {/* ── Module Toggle ──────────────────────────────────────────────── */}
             <View style={styles.card}>
@@ -397,4 +437,30 @@ const styles = StyleSheet.create({
     dataBtnText: { fontSize: 14, fontWeight: '600', color: AstraColors.foreground },
     deleteBtn: { borderColor: AstraColors.destructive },
     deleteBtnText: { color: AstraColors.destructive },
+    textInput: {
+        backgroundColor: AstraColors.background,
+        borderRadius: AstraRadius.md,
+        borderWidth: 1,
+        borderColor: AstraColors.border,
+        padding: 12,
+        fontSize: 14,
+        color: AstraColors.foreground,
+        lineHeight: 20,
+        minHeight: 80,
+        marginTop: 12,
+        textAlignVertical: 'top',
+    },
+    playBtn: {
+        backgroundColor: AstraColors.primaryLight,
+        borderRadius: AstraRadius.md,
+        paddingVertical: 12,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(92,138,108,0.2)',
+    },
+    playBtnText: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: AstraColors.primary,
+    },
 });
