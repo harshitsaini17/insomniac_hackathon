@@ -11,6 +11,7 @@ import {
     Platform,
 } from 'react-native';
 import type { DailyHealthInput } from '@/types';
+import { AstraColors, AstraCard, AstraRadius, AstraShadow } from '@/constants/astraTheme';
 
 interface DailyInputFormProps {
     visible: boolean;
@@ -113,6 +114,7 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
                             onChangeText={setSleepHours}
                             keyboardType="decimal-pad"
                             placeholder="7.5"
+                            placeholderTextColor={AstraColors.mutedForeground}
                         />
                     </View>
 
@@ -131,6 +133,7 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
                             onChangeText={setSleepDisturbances}
                             keyboardType="number-pad"
                             placeholder="0"
+                            placeholderTextColor={AstraColors.mutedForeground}
                         />
                     </View>
 
@@ -143,6 +146,7 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
                             onChangeText={setExerciseMinutes}
                             keyboardType="number-pad"
                             placeholder="30"
+                            placeholderTextColor={AstraColors.mutedForeground}
                         />
                     </View>
 
@@ -155,6 +159,7 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
                             onChangeText={setSedentaryHours}
                             keyboardType="decimal-pad"
                             placeholder="6"
+                            placeholderTextColor={AstraColors.mutedForeground}
                         />
                     </View>
 
@@ -167,6 +172,7 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
                             onChangeText={setWaterMl}
                             keyboardType="number-pad"
                             placeholder="2000"
+                            placeholderTextColor={AstraColors.mutedForeground}
                         />
                     </View>
 
@@ -191,6 +197,7 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
                             onChangeText={setHrvMs}
                             keyboardType="decimal-pad"
                             placeholder="e.g. 45"
+                            placeholderTextColor={AstraColors.mutedForeground}
                         />
                     </View>
 
@@ -203,6 +210,7 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
                             onChangeText={setWeightKg}
                             keyboardType="decimal-pad"
                             placeholder="e.g. 70"
+                            placeholderTextColor={AstraColors.mutedForeground}
                         />
                     </View>
 
@@ -215,6 +223,7 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
                             onChangeText={setNotes}
                             multiline
                             placeholder="How are you feeling?"
+                            placeholderTextColor={AstraColors.mutedForeground}
                         />
                     </View>
 
@@ -229,96 +238,42 @@ export function DailyInputForm({ visible, onClose, onSubmit }: DailyInputFormPro
 }
 
 const styles = StyleSheet.create({
-    modal: {
-        flex: 1,
-        backgroundColor: '#FAFAFA',
-    },
+    modal: { flex: 1, backgroundColor: AstraColors.background },
     modalHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 20,
-        paddingTop: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#F0F0F0',
-        backgroundColor: '#FFF',
+        flexDirection: 'row', justifyContent: 'space-between',
+        alignItems: 'center', padding: 20, paddingTop: 16,
+        borderBottomWidth: 1, borderBottomColor: AstraColors.border,
+        backgroundColor: AstraColors.card,
     },
-    modalTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#1A1A1A',
-    },
-    closeBtn: {
-        fontSize: 20,
-        color: '#999',
-        padding: 4,
-    },
-    formScroll: {
-        flex: 1,
-    },
-    formContent: {
-        padding: 20,
-        paddingBottom: 40,
-    },
-    field: {
-        marginBottom: 20,
-    },
-    fieldLabel: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1A1A1A',
-        marginBottom: 8,
-    },
+    modalTitle: { fontSize: 18, fontWeight: '700', color: AstraColors.foreground },
+    closeBtn: { fontSize: 20, color: AstraColors.mutedForeground, padding: 4 },
+    formScroll: { flex: 1 },
+    formContent: { padding: 20, paddingBottom: 40 },
+    field: { marginBottom: 20 },
+    fieldLabel: { fontSize: 14, fontWeight: '600', color: AstraColors.foreground, marginBottom: 8 },
     input: {
-        backgroundColor: '#FFF',
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        borderRadius: 8,
-        paddingHorizontal: 14,
-        paddingVertical: 10,
-        fontSize: 16,
-        color: '#1A1A1A',
+        backgroundColor: AstraColors.card, borderWidth: 1,
+        borderColor: AstraColors.border, borderRadius: AstraRadius.md,
+        paddingHorizontal: 14, paddingVertical: 10,
+        fontSize: 16, color: AstraColors.foreground,
     },
-    notesInput: {
-        minHeight: 80,
-        textAlignVertical: 'top',
-    },
-    ratingRow: {
-        flexDirection: 'row',
-        gap: 8,
-    },
+    notesInput: { minHeight: 80, textAlignVertical: 'top' },
+    ratingRow: { flexDirection: 'row', gap: 8 },
     ratingBtn: {
-        width: 44,
-        height: 44,
-        borderRadius: 8,
-        borderWidth: 1,
-        borderColor: '#E0E0E0',
-        backgroundColor: '#FFF',
-        justifyContent: 'center',
-        alignItems: 'center',
+        width: 44, height: 44, borderRadius: AstraRadius.md,
+        borderWidth: 1, borderColor: AstraColors.border,
+        backgroundColor: AstraColors.card, justifyContent: 'center', alignItems: 'center',
     },
     ratingBtnActive: {
-        backgroundColor: '#1A1A1A',
-        borderColor: '#1A1A1A',
+        backgroundColor: AstraColors.primary, borderColor: AstraColors.primary,
     },
-    ratingText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#666',
-    },
-    ratingTextActive: {
-        color: '#FFF',
-    },
+    ratingText: { fontSize: 16, fontWeight: '600', color: AstraColors.warmGray },
+    ratingTextActive: { color: AstraColors.primaryForeground },
     submitBtn: {
-        backgroundColor: '#1A1A1A',
-        borderRadius: 12,
-        paddingVertical: 16,
-        alignItems: 'center',
-        marginTop: 8,
+        backgroundColor: AstraColors.primary,
+        borderRadius: AstraRadius.lg, paddingVertical: 16,
+        alignItems: 'center', marginTop: 8,
+        ...AstraShadow.button,
     },
-    submitText: {
-        color: '#FFF',
-        fontSize: 16,
-        fontWeight: '700',
-    },
+    submitText: { color: AstraColors.primaryForeground, fontSize: 16, fontWeight: '700' },
 });

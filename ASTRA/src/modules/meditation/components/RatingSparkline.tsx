@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface RatingSparklineProps {
     data: { date: string; avg: number }[];
@@ -41,18 +42,15 @@ export function RatingSparkline({ data }: RatingSparklineProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 12,
         flex: 1,
     },
     title: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 8,
     },
     sparkRow: {
@@ -72,12 +70,12 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#1A1A1A',
+        backgroundColor: AstraColors.meditation,
         position: 'absolute',
     },
     dayLabel: {
         fontSize: 10,
-        color: '#AAA',
+        color: AstraColors.mutedForeground,
     },
     empty: {
         height: 40,
@@ -86,6 +84,6 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 12,
-        color: '#AAA',
+        color: AstraColors.mutedForeground,
     },
 });

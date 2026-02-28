@@ -19,6 +19,7 @@ import {
     isSessionSuccessful,
 } from '../modules/focusTrainer/math/pomodoroSurvival';
 import { insertPomodoroSession, getRecentPomodoroSessions } from '../database/repository';
+import { AstraColors, AstraCard, AstraShadow, AstraRadius } from '../constants/astraTheme';
 
 export default function FocusSessionScreen() {
     const {
@@ -85,7 +86,7 @@ export default function FocusSessionScreen() {
         }
     }, [sessionTimeRemaining, phase]);
 
-    // ── Pulse animation ────────────────────────────────────────────────────
+    // ── Pulse animation — sage green breathing ──────────────────────────────
     useEffect(() => {
         if (phase === 'focus') {
             Animated.loop(
@@ -174,13 +175,17 @@ export default function FocusSessionScreen() {
 
     return (
         <View style={styles.container}>
+            {/* ── Header Caption ──────────────────────────────────────────── */}
+            <Text style={styles.headerCaption}>FOCUS MODE</Text>
+            <Text style={styles.headerTitle}>Deep Work</Text>
+
             {/* ── Phase Indicator ────────────────────────────────────────────── */}
             <Text style={styles.phaseLabel}>
                 {phase === 'idle'
                     ? 'Ready to Focus'
                     : phase === 'focus'
-                        ? '🎯 Deep Focus'
-                        : '☕ Break Time'}
+                        ? 'Deep Focus'
+                        : 'Break Time'}
             </Text>
 
             {/* ── Timer Ring ─────────────────────────────────────────────────── */}
@@ -190,12 +195,16 @@ export default function FocusSessionScreen() {
                     { transform: [{ scale: pulseAnim }] },
                 ]}
             >
+                {/* Outer breathing ring */}
+                <View style={styles.breatheRingOuter} />
+                <View style={styles.breatheRingInner} />
+
                 <View style={styles.timerOuter}>
                     <View
                         style={[
                             styles.timerProgress,
                             {
-                                borderColor: phase === 'break' ? '#58A6FF' : '#00E676',
+                                borderColor: phase === 'break' ? AstraColors.blue : AstraColors.primary,
                                 borderWidth: 4,
                                 opacity: progress,
                             },
@@ -219,7 +228,7 @@ export default function FocusSessionScreen() {
             {/* ── Goal Display ───────────────────────────────────────────────── */}
             {activeGoal && (
                 <View style={styles.goalBanner}>
-                    <Text style={styles.goalLabel}>Goal</Text>
+                    <Text style={styles.goalLabel}>GOAL</Text>
                     <Text style={styles.goalTitle}>{activeGoal.title}</Text>
                 </View>
             )}
@@ -261,30 +270,67 @@ export default function FocusSessionScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0D1117',
+        backgroundColor: AstraColors.background,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 24,
     },
+    headerCaption: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: AstraColors.mutedForeground,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        marginBottom: 4,
+        position: 'absolute',
+        top: 56,
+        left: 24,
+    },
+    headerTitle: {
+        fontSize: 30,
+        fontWeight: '700',
+        color: AstraColors.foreground,
+        letterSpacing: -0.5,
+        position: 'absolute',
+        top: 74,
+        left: 24,
+    },
     phaseLabel: {
         fontSize: 20,
-        fontWeight: '700',
-        color: '#E6EDF3',
+        fontWeight: '600',
+        color: AstraColors.foreground,
         marginBottom: 40,
-        letterSpacing: 1,
+        letterSpacing: -0.3,
     },
     timerContainer: {
         marginBottom: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    breatheRingOuter: {
+        position: 'absolute',
+        width: 280,
+        height: 280,
+        borderRadius: 140,
+        backgroundColor: 'rgba(92,138,108,0.06)',
+    },
+    breatheRingInner: {
+        position: 'absolute',
+        width: 260,
+        height: 260,
+        borderRadius: 130,
+        backgroundColor: 'rgba(92,138,108,0.04)',
     },
     timerOuter: {
         width: 240,
         height: 240,
         borderRadius: 120,
-        backgroundColor: '#161B22',
+        backgroundColor: AstraColors.card,
         borderWidth: 2,
-        borderColor: '#30363D',
+        borderColor: AstraColors.border,
         alignItems: 'center',
         justifyContent: 'center',
+        ...AstraShadow.elevated,
     },
     timerProgress: {
         position: 'absolute',
@@ -298,84 +344,81 @@ const styles = StyleSheet.create({
     timerText: {
         fontSize: 56,
         fontWeight: '200',
-        color: '#E6EDF3',
+        color: AstraColors.foreground,
         fontVariant: ['tabular-nums'],
     },
     timerPhase: {
         fontSize: 13,
-        color: '#8B949E',
+        color: AstraColors.mutedForeground,
         marginTop: 4,
     },
     goalBanner: {
-        backgroundColor: '#161B22',
-        borderRadius: 12,
+        ...AstraCard,
         paddingHorizontal: 20,
         paddingVertical: 12,
         marginBottom: 32,
         borderLeftWidth: 3,
-        borderLeftColor: '#58A6FF',
+        borderLeftColor: AstraColors.primary,
         width: '100%',
     },
     goalLabel: {
         fontSize: 10,
-        color: '#8B949E',
+        color: AstraColors.mutedForeground,
         textTransform: 'uppercase',
         letterSpacing: 1,
     },
     goalTitle: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#E6EDF3',
+        color: AstraColors.foreground,
         marginTop: 4,
     },
     controls: {
         marginBottom: 32,
     },
     startBtn: {
-        backgroundColor: '#238636',
+        backgroundColor: AstraColors.primary,
         paddingHorizontal: 48,
         paddingVertical: 16,
         borderRadius: 30,
+        ...AstraShadow.button,
     },
     startBtnText: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#FFFFFF',
+        color: AstraColors.primaryForeground,
     },
     stopBtn: {
-        backgroundColor: '#21262D',
+        backgroundColor: AstraColors.muted,
         paddingHorizontal: 48,
         paddingVertical: 16,
         borderRadius: 30,
         borderWidth: 1,
-        borderColor: '#F85149',
+        borderColor: AstraColors.destructive,
     },
     stopBtnText: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#F85149',
+        color: AstraColors.destructive,
     },
     statsContainer: {
         flexDirection: 'row',
         gap: 20,
     },
     statBox: {
-        backgroundColor: '#161B22',
-        borderRadius: 12,
+        ...AstraCard,
         paddingHorizontal: 24,
         paddingVertical: 16,
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#21262D',
     },
     statValue: {
         fontSize: 24,
         fontWeight: '700',
-        color: '#E6EDF3',
+        color: AstraColors.foreground,
     },
     statLabel: {
         fontSize: 11,
-        color: '#8B949E',
+        color: AstraColors.mutedForeground,
         marginTop: 4,
     },
 });

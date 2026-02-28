@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { HealthDayRecord } from '@/types';
 import { pearsonCorrelation } from '@/engine/health-trends';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface ExerciseScatterProps {
     records: HealthDayRecord[];
@@ -39,12 +40,10 @@ export function ExerciseScatter({ records }: ExerciseScatterProps) {
                 )}
             </View>
             <View style={styles.plotArea}>
-                {/* Y-axis (Readiness) */}
                 <View style={styles.yAxis}>
                     <Text style={styles.axisLabel}>100</Text>
                     <Text style={styles.axisLabel}>0</Text>
                 </View>
-                {/* Plot body */}
                 <View style={styles.plotBody}>
                     {last14.map((rec, i) => {
                         const xPct =
@@ -76,73 +75,27 @@ export function ExerciseScatter({ records }: ExerciseScatterProps) {
 }
 
 const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
-        padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
-        marginBottom: 12,
-    },
+    card: { ...AstraCard, padding: 16, marginBottom: 12 },
     headerRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 8,
+        flexDirection: 'row', justifyContent: 'space-between',
+        alignItems: 'center', marginBottom: 8,
     },
-    title: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1A1A1A',
-    },
-    corrText: {
-        fontSize: 12,
-        color: '#888',
-        fontWeight: '500',
-    },
-    plotArea: {
-        flexDirection: 'row',
-        height: 120,
-    },
-    yAxis: {
-        width: 28,
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        paddingRight: 4,
-    },
+    title: { fontSize: 14, fontWeight: '600', color: AstraColors.foreground },
+    corrText: { fontSize: 12, color: AstraColors.mutedForeground, fontWeight: '500' },
+    plotArea: { flexDirection: 'row', height: 120 },
+    yAxis: { width: 28, justifyContent: 'space-between', alignItems: 'flex-end', paddingRight: 4 },
     plotBody: {
-        flex: 1,
-        position: 'relative',
-        borderLeftWidth: 1,
-        borderBottomWidth: 1,
-        borderColor: '#E0E0E0',
+        flex: 1, position: 'relative',
+        borderLeftWidth: 1, borderBottomWidth: 1, borderColor: AstraColors.border,
     },
     dot: {
-        position: 'absolute',
-        width: 8,
-        height: 8,
-        borderRadius: 4,
-        backgroundColor: '#1A1A1A',
-        marginLeft: -4,
-        marginBottom: -4,
+        position: 'absolute', width: 8, height: 8, borderRadius: 4,
+        backgroundColor: AstraColors.healthActivity, marginLeft: -4, marginBottom: -4,
     },
     xAxisRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 4,
-        paddingLeft: 32,
+        flexDirection: 'row', justifyContent: 'space-between', marginTop: 4, paddingLeft: 32,
     },
-    axisLabel: {
-        fontSize: 10,
-        color: '#AAA',
-    },
-    emptyState: {
-        height: 80,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    emptyText: {
-        fontSize: 13,
-        color: '#AAA',
-    },
+    axisLabel: { fontSize: 10, color: AstraColors.mutedForeground },
+    emptyState: { height: 80, justifyContent: 'center', alignItems: 'center' },
+    emptyText: { fontSize: 13, color: AstraColors.mutedForeground },
 });

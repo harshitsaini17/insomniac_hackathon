@@ -18,6 +18,7 @@ import {
     aggregateToFocusWindows,
 } from '../modules/focusTrainer/math/attentionForecasting';
 import { HourBlock } from '../modules/focusTrainer/models/types';
+import { AstraColors, AstraCard, AstraRadius } from '../constants/astraTheme';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const HOURS_DISPLAY = [
@@ -58,11 +59,11 @@ export default function HeatmapScreen() {
 
     const getColor = (block: HourBlock): string => {
         switch (block.label) {
-            case 'optimal': return '#00E676';
-            case 'good': return '#69F0AE';
-            case 'fair': return '#FFD740';
-            case 'poor': return '#FF5252';
-            default: return '#21262D';
+            case 'optimal': return AstraColors.primary;
+            case 'good': return AstraColors.primaryMuted;
+            case 'fair': return AstraColors.warning;
+            case 'poor': return AstraColors.destructive;
+            default: return AstraColors.muted;
         }
     };
 
@@ -87,7 +88,8 @@ export default function HeatmapScreen() {
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-            <Text style={styles.title}>📊 Focus Heatmap</Text>
+            <Text style={styles.caption}>ANALYTICS</Text>
+            <Text style={styles.title}>Focus Heatmap</Text>
             <Text style={styles.subtitle}>
                 Your predicted attention quality across the week
             </Text>
@@ -101,9 +103,9 @@ export default function HeatmapScreen() {
                                 styles.legendDot,
                                 {
                                     backgroundColor:
-                                        label === 'optimal' ? '#00E676' :
-                                            label === 'good' ? '#69F0AE' :
-                                                label === 'fair' ? '#FFD740' : '#FF5252',
+                                        label === 'optimal' ? AstraColors.primary :
+                                            label === 'good' ? AstraColors.primaryMuted :
+                                                label === 'fair' ? AstraColors.warning : AstraColors.destructive,
                                 },
                             ]}
                         />
@@ -156,7 +158,7 @@ export default function HeatmapScreen() {
 
             {/* ── Suggested Windows ──────────────────────────────────────────── */}
             <View style={styles.suggestedCard}>
-                <Text style={styles.suggestedTitle}>🎯 Optimal Windows Today</Text>
+                <Text style={styles.suggestedTitle}>Optimal Windows Today</Text>
                 {suggestedWindows.length > 0 ? (
                     suggestedWindows.map((w, i) => (
                         <View key={i} style={styles.windowRow}>
@@ -187,7 +189,7 @@ export default function HeatmapScreen() {
 
             {/* ── Insights ───────────────────────────────────────────────────── */}
             <View style={styles.insightCard}>
-                <Text style={styles.insightTitle}>💡 Insights</Text>
+                <Text style={styles.insightTitle}>Insights</Text>
                 <Text style={styles.insightText}>
                     • Your best focus hours tend to be in the morning (8–11 AM)
                 </Text>
@@ -213,56 +215,66 @@ function formatHour(h: number): string {
 // ── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0D1117' },
-    content: { padding: 16, paddingBottom: 100 },
+    container: { flex: 1, backgroundColor: AstraColors.background },
+    content: { padding: 20, paddingTop: 56, paddingBottom: 100 },
+    caption: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: AstraColors.mutedForeground,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        marginBottom: 4,
+    },
     title: {
-        fontSize: 28, fontWeight: '800', color: '#E6EDF3',
-        marginTop: 8, marginBottom: 4,
+        fontSize: 30, fontWeight: '700', color: AstraColors.foreground,
+        letterSpacing: -0.5, marginBottom: 4,
     },
     subtitle: {
-        fontSize: 14, color: '#8B949E', marginBottom: 20,
+        fontSize: 14, color: AstraColors.mutedForeground, marginBottom: 20,
     },
     legend: {
         flexDirection: 'row', gap: 16, marginBottom: 16,
         justifyContent: 'center',
     },
     legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-    legendDot: { width: 10, height: 10, borderRadius: 2 },
-    legendText: { fontSize: 12, color: '#8B949E' },
+    legendDot: { width: 10, height: 10, borderRadius: 3 },
+    legendText: { fontSize: 12, color: AstraColors.mutedForeground },
     hourRow: { flexDirection: 'row', marginBottom: 4 },
-    hourLabel: { width: 18, fontSize: 9, color: '#8B949E', textAlign: 'center' },
+    hourLabel: { width: 18, fontSize: 9, color: AstraColors.mutedForeground, textAlign: 'center' },
     hourLabelVisible: {},
     hourLabelHidden: { opacity: 0 },
     dayRow: { flexDirection: 'row', marginBottom: 3, alignItems: 'center' },
-    dayLabel: { width: 36, fontSize: 11, color: '#8B949E', fontWeight: '600' },
+    dayLabel: { width: 36, fontSize: 11, color: AstraColors.mutedForeground, fontWeight: '500' },
     cell: {
-        width: 16, height: 16, borderRadius: 3, marginHorizontal: 1,
+        width: 16, height: 16, borderRadius: 4, marginHorizontal: 1,
     },
     suggestedCard: {
-        backgroundColor: '#161B22', borderRadius: 16, padding: 20,
-        marginTop: 20, borderWidth: 1, borderColor: '#21262D',
+        ...AstraCard,
+        padding: 20,
+        marginTop: 20,
     },
     suggestedTitle: {
-        fontSize: 16, fontWeight: '600', color: '#E6EDF3', marginBottom: 14,
+        fontSize: 16, fontWeight: '600', color: AstraColors.foreground, marginBottom: 14,
     },
     windowRow: {
         flexDirection: 'row', alignItems: 'center', marginBottom: 10, gap: 12,
     },
-    windowTime: { fontSize: 14, color: '#E6EDF3', width: 130 },
+    windowTime: { fontSize: 14, color: AstraColors.foreground, width: 130 },
     windowBadge: {
         paddingHorizontal: 8, paddingVertical: 3, borderRadius: 4,
     },
-    windowLabel: { fontSize: 10, fontWeight: '700', color: '#0D1117' },
-    windowAFI: { fontSize: 12, color: '#8B949E' },
-    noData: { fontSize: 13, color: '#8B949E', fontStyle: 'italic' },
+    windowLabel: { fontSize: 10, fontWeight: '700', color: AstraColors.primaryForeground },
+    windowAFI: { fontSize: 12, color: AstraColors.mutedForeground },
+    noData: { fontSize: 13, color: AstraColors.mutedForeground, fontStyle: 'italic' },
     insightCard: {
-        backgroundColor: '#161B22', borderRadius: 16, padding: 20,
-        marginTop: 12, borderWidth: 1, borderColor: '#21262D',
+        ...AstraCard,
+        padding: 20,
+        marginTop: 12,
     },
     insightTitle: {
-        fontSize: 16, fontWeight: '600', color: '#E6EDF3', marginBottom: 12,
+        fontSize: 16, fontWeight: '600', color: AstraColors.foreground, marginBottom: 12,
     },
     insightText: {
-        fontSize: 13, color: '#8B949E', marginBottom: 6, lineHeight: 20,
+        fontSize: 13, color: AstraColors.mutedForeground, marginBottom: 6, lineHeight: 20,
     },
 });

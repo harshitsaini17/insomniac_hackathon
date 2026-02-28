@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import type { HealthDayRecord } from '@/types';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface ReadinessTrendChartProps {
     records: HealthDayRecord[];
@@ -8,8 +9,6 @@ interface ReadinessTrendChartProps {
 
 export function ReadinessTrendChart({ records }: ReadinessTrendChartProps) {
     const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-
-    // Get last 7 records, fill gaps with null
     const last7 = records.slice(-7);
     const maxVal = 100;
 
@@ -34,21 +33,15 @@ export function ReadinessTrendChart({ records }: ReadinessTrendChartProps) {
                 </Text>
             )}
             <View style={styles.chartArea}>
-                {/* Y-axis labels */}
                 <View style={styles.yAxis}>
                     <Text style={styles.yLabel}>100</Text>
                     <Text style={styles.yLabel}>50</Text>
                     <Text style={styles.yLabel}>0</Text>
                 </View>
-
-                {/* Chart body with lines */}
                 <View style={styles.chartBody}>
-                    {/* Grid lines */}
                     <View style={[styles.gridLine, { top: '0%' }]} />
                     <View style={[styles.gridLine, { top: '50%' }]} />
                     <View style={[styles.gridLine, { top: '100%' }]} />
-
-                    {/* Bars */}
                     <View style={styles.barsRow}>
                         {last7.map((record, i) => {
                             const height =
@@ -71,8 +64,8 @@ export function ReadinessTrendChart({ records }: ReadinessTrendChartProps) {
                                                     height: `${height}%`,
                                                     backgroundColor:
                                                         selectedIdx === i
-                                                            ? '#1A1A1A'
-                                                            : '#666',
+                                                            ? AstraColors.primary
+                                                            : AstraColors.primaryMuted,
                                                 },
                                             ]}
                                         />
@@ -91,88 +84,23 @@ export function ReadinessTrendChart({ records }: ReadinessTrendChartProps) {
 }
 
 const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
-        padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
-        marginBottom: 12,
-    },
-    title: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: '#1A1A1A',
-        marginBottom: 8,
-    },
+    card: { ...AstraCard, padding: 16, marginBottom: 12 },
+    title: { fontSize: 14, fontWeight: '600', color: AstraColors.foreground, marginBottom: 8 },
     tooltip: {
-        fontSize: 12,
-        color: '#1A1A1A',
-        fontWeight: '600',
-        marginBottom: 8,
-        backgroundColor: '#F5F5F5',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 4,
-        alignSelf: 'flex-start',
+        fontSize: 12, color: AstraColors.primary, fontWeight: '600', marginBottom: 8,
+        backgroundColor: AstraColors.primaryLight, paddingHorizontal: 8, paddingVertical: 4,
+        borderRadius: 4, alignSelf: 'flex-start',
     },
-    chartArea: {
-        flexDirection: 'row',
-        height: 140,
-    },
-    yAxis: {
-        width: 28,
-        justifyContent: 'space-between',
-        alignItems: 'flex-end',
-        paddingRight: 4,
-    },
-    yLabel: {
-        fontSize: 10,
-        color: '#AAA',
-    },
-    chartBody: {
-        flex: 1,
-        position: 'relative',
-    },
-    gridLine: {
-        position: 'absolute',
-        left: 0,
-        right: 0,
-        height: 1,
-        backgroundColor: '#F0F0F0',
-    },
-    barsRow: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        justifyContent: 'space-around',
-    },
-    barWrapper: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    barContainer: {
-        flex: 1,
-        width: '60%',
-        justifyContent: 'flex-end',
-    },
-    bar: {
-        width: '100%',
-        borderRadius: 3,
-        minHeight: 2,
-    },
-    xLabel: {
-        fontSize: 9,
-        color: '#AAA',
-        marginTop: 4,
-    },
-    emptyState: {
-        height: 100,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    emptyText: {
-        fontSize: 13,
-        color: '#AAA',
-    },
+    chartArea: { flexDirection: 'row', height: 140 },
+    yAxis: { width: 28, justifyContent: 'space-between', alignItems: 'flex-end', paddingRight: 4 },
+    yLabel: { fontSize: 10, color: AstraColors.mutedForeground },
+    chartBody: { flex: 1, position: 'relative' },
+    gridLine: { position: 'absolute', left: 0, right: 0, height: 1, backgroundColor: AstraColors.border },
+    barsRow: { flex: 1, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-around' },
+    barWrapper: { alignItems: 'center', flex: 1 },
+    barContainer: { flex: 1, width: '60%', justifyContent: 'flex-end' },
+    bar: { width: '100%', borderRadius: 3, minHeight: 2 },
+    xLabel: { fontSize: 9, color: AstraColors.mutedForeground, marginTop: 4 },
+    emptyState: { height: 100, justifyContent: 'center', alignItems: 'center' },
+    emptyText: { fontSize: 13, color: AstraColors.mutedForeground },
 });

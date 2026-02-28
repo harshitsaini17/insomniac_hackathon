@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import type { HealthDayRecord } from '@/types';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface HRVChartProps {
     records: HealthDayRecord[];
@@ -8,8 +9,6 @@ interface HRVChartProps {
 
 export function HRVChart({ records }: HRVChartProps) {
     const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
-
-    // Filter records that have HRV data
     const withHRV = records.slice(-7).filter((r) => r.input.hrv_rmssd_ms != null);
 
     if (withHRV.length === 0) {
@@ -54,7 +53,9 @@ export function HRVChart({ records }: HRVChartProps) {
                                         {
                                             height: `${Math.min(100, height)}%`,
                                             backgroundColor:
-                                                hrv >= 50 ? '#555' : hrv >= 40 ? '#999' : '#CCC',
+                                                hrv >= 50 ? AstraColors.healthHRV
+                                                    : hrv >= 40 ? AstraColors.primaryMuted
+                                                        : AstraColors.muted,
                                         },
                                     ]}
                                 />
@@ -71,63 +72,15 @@ export function HRVChart({ records }: HRVChartProps) {
 }
 
 const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
-        padding: 12,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
-        flex: 1,
-    },
-    title: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#1A1A1A',
-        marginBottom: 6,
-    },
-    tooltip: {
-        fontSize: 11,
-        color: '#1A1A1A',
-        fontWeight: '600',
-        marginBottom: 4,
-    },
-    barsRow: {
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        height: 80,
-        justifyContent: 'space-around',
-    },
-    barWrapper: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    barContainer: {
-        flex: 1,
-        width: '50%',
-        justifyContent: 'flex-end',
-    },
-    bar: {
-        width: '100%',
-        borderRadius: 2,
-        minHeight: 2,
-    },
-    xLabel: {
-        fontSize: 9,
-        color: '#AAA',
-        marginTop: 3,
-    },
-    emptyState: {
-        height: 80,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    emptyIcon: {
-        fontSize: 20,
-        marginBottom: 4,
-    },
-    emptyText: {
-        fontSize: 11,
-        color: '#AAA',
-        textAlign: 'center',
-    },
+    card: { ...AstraCard, padding: 12, flex: 1 },
+    title: { fontSize: 12, fontWeight: '600', color: AstraColors.foreground, marginBottom: 6 },
+    tooltip: { fontSize: 11, color: AstraColors.healthHRV, fontWeight: '600', marginBottom: 4 },
+    barsRow: { flexDirection: 'row', alignItems: 'flex-end', height: 80, justifyContent: 'space-around' },
+    barWrapper: { alignItems: 'center', flex: 1 },
+    barContainer: { flex: 1, width: '50%', justifyContent: 'flex-end' },
+    bar: { width: '100%', borderRadius: 2, minHeight: 2 },
+    xLabel: { fontSize: 9, color: AstraColors.mutedForeground, marginTop: 3 },
+    emptyState: { height: 80, justifyContent: 'center', alignItems: 'center' },
+    emptyIcon: { fontSize: 20, marginBottom: 4 },
+    emptyText: { fontSize: 11, color: AstraColors.mutedForeground, textAlign: 'center' },
 });

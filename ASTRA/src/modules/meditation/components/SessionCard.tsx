@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import type { MeditationType } from '@/types';
 import { MEDITATION_LABELS, MEDITATION_DESCRIPTIONS } from '@/types';
+import { AstraColors, AstraCard, AstraRadius } from '@/constants/astraTheme';
 
 interface SessionCardProps {
     type: MeditationType;
@@ -42,14 +43,11 @@ export function SessionCard({ type, recommended, onPress }: SessionCardProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
     },
     pressed: {
-        backgroundColor: '#FAFAFA',
+        backgroundColor: AstraColors.warmGrayLight,
     },
     row: {
         flexDirection: 'row',
@@ -58,7 +56,7 @@ const styles = StyleSheet.create({
     icon: {
         fontSize: 24,
         marginRight: 14,
-        color: '#1A1A1A',
+        color: AstraColors.meditation,
     },
     textContainer: {
         flex: 1,
@@ -71,11 +69,11 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
     },
     badge: {
         marginLeft: 8,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: AstraColors.primaryLight,
         paddingHorizontal: 8,
         paddingVertical: 2,
         borderRadius: 4,
@@ -83,13 +81,13 @@ const styles = StyleSheet.create({
     badgeText: {
         fontSize: 10,
         fontWeight: '600',
-        color: '#666',
+        color: AstraColors.primary,
         textTransform: 'uppercase',
         letterSpacing: 0.5,
     },
     description: {
         fontSize: 13,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         lineHeight: 18,
     },
 });

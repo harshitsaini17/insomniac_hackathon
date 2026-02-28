@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { AttentionCapacity } from '@/types';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface CognitiveReadinessGaugeProps {
     score: number;
@@ -56,16 +57,13 @@ export function CognitiveReadinessGauge({
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 20,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 16,
     },
     date: {
         fontSize: 12,
-        color: '#999',
+        color: AstraColors.mutedForeground,
         marginBottom: 8,
         textTransform: 'uppercase',
         letterSpacing: 1,
@@ -78,34 +76,34 @@ const styles = StyleSheet.create({
     scoreValue: {
         fontSize: 48,
         fontWeight: '800',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
     },
     scoreUnit: {
         fontSize: 20,
         fontWeight: '600',
-        color: '#888',
+        color: AstraColors.mutedForeground,
         marginLeft: 2,
     },
     scoreLabel: {
         fontSize: 14,
-        color: '#666',
+        color: AstraColors.warmGray,
         marginLeft: 12,
         flex: 1,
     },
     barTrack: {
         height: 6,
-        backgroundColor: '#EEEEEE',
+        backgroundColor: AstraColors.primaryLight,
         borderRadius: 3,
         overflow: 'hidden',
         marginBottom: 10,
     },
     barFill: {
         height: 6,
-        backgroundColor: '#1A1A1A',
+        backgroundColor: AstraColors.primary,
         borderRadius: 3,
     },
     sessionHint: {
         fontSize: 13,
-        color: '#888',
+        color: AstraColors.mutedForeground,
     },
 });

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface MetricCardProps {
     icon: string;
@@ -10,9 +11,9 @@ interface MetricCardProps {
 }
 
 const STATUS_COLORS = {
-    good: '#2D8A4E',
-    warn: '#B5860B',
-    bad: '#C0392B',
+    good: AstraColors.healthHRV,
+    warn: AstraColors.warning,
+    bad: AstraColors.destructive,
 };
 
 export function MetricCard({ icon, label, value, unit, status }: MetricCardProps) {
@@ -33,37 +34,14 @@ export function MetricCard({ icon, label, value, unit, status }: MetricCardProps
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         alignItems: 'center',
         flex: 1,
     },
-    icon: {
-        fontSize: 24,
-        marginBottom: 8,
-    },
-    value: {
-        fontSize: 24,
-        fontWeight: '700',
-        color: '#1A1A1A',
-    },
-    unit: {
-        fontSize: 12,
-        fontWeight: '400',
-        color: '#888',
-    },
-    label: {
-        fontSize: 12,
-        color: '#888',
-        marginTop: 4,
-    },
-    statusDot: {
-        width: 6,
-        height: 6,
-        borderRadius: 3,
-        marginTop: 6,
-    },
+    icon: { fontSize: 24, marginBottom: 8 },
+    value: { fontSize: 24, fontWeight: '700', color: AstraColors.foreground },
+    unit: { fontSize: 12, fontWeight: '400', color: AstraColors.mutedForeground },
+    label: { fontSize: 12, color: AstraColors.mutedForeground, marginTop: 4 },
+    statusDot: { width: 6, height: 6, borderRadius: 3, marginTop: 6 },
 });

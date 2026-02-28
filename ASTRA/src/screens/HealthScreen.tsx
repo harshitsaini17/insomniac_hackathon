@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { useHealthStore } from '@/store/health-store';
 import { getHydrationTarget } from '@/engine/health-normalizers';
 import { RULE_LOW_HYDRATION_RATIO } from '@/constants/health-constants';
+import { AstraColors, AstraCard, AstraShadow, AstraRadius } from '../constants/astraTheme';
 
 // Components
 import { CognitiveReadinessGauge } from '@/components/health/CognitiveReadinessGauge';
@@ -44,6 +45,10 @@ export default function HealthScreen() {
     return (
         <>
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+                {/* Header */}
+                <Text style={styles.headerCaption}>WELLNESS</Text>
+                <Text style={styles.headerTitle}>Health</Text>
+
                 {/* Cognitive Readiness Gauge */}
                 {latestRecord ? (
                     <CognitiveReadinessGauge
@@ -132,30 +137,43 @@ export default function HealthScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FAFAFA',
+        backgroundColor: AstraColors.background,
     },
     content: {
         padding: 20,
+        paddingTop: 56,
         paddingBottom: 80,
     },
+    headerCaption: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: AstraColors.mutedForeground,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        marginBottom: 4,
+    },
+    headerTitle: {
+        fontSize: 30,
+        fontWeight: '700',
+        color: AstraColors.foreground,
+        letterSpacing: -0.5,
+        marginBottom: 16,
+    },
     emptyGauge: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 32,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 16,
         alignItems: 'center',
     },
     emptyTitle: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 6,
     },
     emptySubtitle: {
         fontSize: 14,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         textAlign: 'center',
     },
     section: {
@@ -164,7 +182,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 10,
     },
     recList: {
@@ -179,18 +197,14 @@ const styles = StyleSheet.create({
         bottom: 24,
         right: 20,
         left: 20,
-        backgroundColor: '#1A1A1A',
-        borderRadius: 14,
+        backgroundColor: AstraColors.primary,
+        borderRadius: AstraRadius.md,
         paddingVertical: 16,
         alignItems: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.15,
-        shadowRadius: 8,
-        elevation: 4,
+        ...AstraShadow.button,
     },
     fabText: {
-        color: '#FFF',
+        color: AstraColors.primaryForeground,
         fontSize: 16,
         fontWeight: '700',
     },

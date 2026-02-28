@@ -36,21 +36,21 @@ import {
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-// ── Colors ───────────────────────────────────────────────────────────────────
+// ── Colors (Astra warm-neutral palette) ──────────────────────────────────────
 
 const COLORS = {
-    bg: '#0D1117',
-    card: '#161B22',
-    border: '#30363D',
-    accent: '#58A6FF',
-    accentDim: '#1F3A5F',
-    text: '#E6EDF3',
-    textSecondary: '#8B949E',
-    textMuted: '#484F58',
-    error: '#F85149',
-    success: '#3FB950',
-    gradientStart: '#58A6FF',
-    gradientEnd: '#BC8CFF',
+    bg: '#FAF8F5',
+    card: '#FFFFFF',
+    border: '#ECEAE7',
+    accent: '#5C8A6C',
+    accentDim: '#E6F0E8',
+    text: '#24272C',
+    textSecondary: '#8C8078',
+    textMuted: '#B0A89F',
+    error: '#CC4444',
+    success: '#4DAD6D',
+    gradientStart: '#5C8A6C',
+    gradientEnd: '#8B6EA5',
 };
 
 // ── Main Component ───────────────────────────────────────────────────────────
@@ -502,7 +502,7 @@ function SummaryStep({
                 <MetricCard
                     label="Goal Urgency"
                     value={`${Math.round(profile.goalUrgencyScore * 100)}%`}
-                    color="#F0883E"
+                    color="#D4823A"
                 />
                 <MetricCard
                     label="Self-Efficacy"
@@ -512,7 +512,7 @@ function SummaryStep({
                 <MetricCard
                     label="Strictness Fit"
                     value={`${Math.round(profile.strictnessCompatibility * 100)}%`}
-                    color="#BC8CFF"
+                    color="#8B6EA5"
                 />
             </View>
 
@@ -672,6 +672,11 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         borderWidth: 1,
         borderColor: COLORS.border,
+        shadowColor: '#B4AFA8',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        elevation: 2,
     },
     questionText: {
         fontSize: 15,
@@ -791,6 +796,11 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         backgroundColor: COLORS.accent,
         alignItems: 'center',
+        shadowColor: '#5C8A6C',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.25,
+        shadowRadius: 12,
+        elevation: 3,
     },
     nextButtonFull: {
         flex: 1,

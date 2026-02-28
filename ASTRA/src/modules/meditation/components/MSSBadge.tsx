@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface MSSBadgeProps {
     score: number;
@@ -34,11 +35,8 @@ export function MSSBadge({ score, label }: MSSBadgeProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 12,
     },
     row: {
@@ -49,7 +47,7 @@ const styles = StyleSheet.create({
     score: {
         fontSize: 40,
         fontWeight: '800',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginRight: 12,
     },
     right: {
@@ -57,24 +55,24 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 11,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         textTransform: 'uppercase',
         letterSpacing: 1,
     },
     sublabel: {
         fontSize: 14,
-        color: '#555',
+        color: AstraColors.warmGray,
         fontWeight: '500',
         marginTop: 2,
     },
     barBg: {
         height: 4,
-        backgroundColor: '#F0F0F0',
+        backgroundColor: AstraColors.primaryLight,
         borderRadius: 2,
     },
     barFill: {
         height: 4,
-        backgroundColor: '#1A1A1A',
+        backgroundColor: AstraColors.primary,
         borderRadius: 2,
     },
 });

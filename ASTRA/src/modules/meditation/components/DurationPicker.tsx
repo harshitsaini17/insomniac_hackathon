@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { AstraColors, AstraRadius } from '@/constants/astraTheme';
 
 interface DurationPickerProps {
     selected: number;
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 10,
     },
     row: {
@@ -46,22 +47,22 @@ const styles = StyleSheet.create({
     pill: {
         flex: 1,
         paddingVertical: 10,
-        borderRadius: 8,
+        borderRadius: AstraRadius.md,
         borderWidth: 1,
-        borderColor: '#E0E0E0',
+        borderColor: AstraColors.border,
         alignItems: 'center',
-        backgroundColor: '#FFF',
+        backgroundColor: AstraColors.card,
     },
     pillActive: {
-        backgroundColor: '#1A1A1A',
-        borderColor: '#1A1A1A',
+        backgroundColor: AstraColors.primary,
+        borderColor: AstraColors.primary,
     },
     pillText: {
         fontSize: 14,
-        color: '#666',
+        color: AstraColors.mutedForeground,
         fontWeight: '500',
     },
     pillTextActive: {
-        color: '#FFF',
+        color: AstraColors.primaryForeground,
     },
 });

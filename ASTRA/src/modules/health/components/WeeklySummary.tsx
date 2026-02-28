@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { HealthDayRecord } from '@/types';
 import { CHRONIC_LOW_THRESHOLD } from '@/constants/health-constants';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface WeeklySummaryProps {
     records: HealthDayRecord[];
@@ -48,22 +49,20 @@ export function WeeklySummary({ records }: WeeklySummaryProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#F8F8F8',
-        borderRadius: 12,
+        ...AstraCard,
+        backgroundColor: AstraColors.warmGrayLight,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 12,
     },
     title: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 6,
     },
     text: {
         fontSize: 13,
-        color: '#666',
+        color: AstraColors.warmGray,
         lineHeight: 19,
     },
 });

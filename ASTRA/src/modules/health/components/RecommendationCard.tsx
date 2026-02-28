@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import type { Recommendation } from '@/types';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface RecommendationCardProps {
     recommendation: Recommendation;
@@ -39,41 +40,31 @@ export function RecommendationCard({ recommendation: rec }: RecommendationCardPr
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 8,
     },
-    icon: {
-        fontSize: 20,
-        marginRight: 12,
-    },
+    icon: { fontSize: 20, marginRight: 12 },
     titleContainer: {
         flex: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    title: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1A1A1A',
-    },
+    title: { fontSize: 16, fontWeight: '600', color: AstraColors.foreground },
     priority: {
         fontSize: 11,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         textTransform: 'uppercase',
         letterSpacing: 0.5,
     },
     description: {
         fontSize: 14,
-        color: '#666',
+        color: AstraColors.warmGray,
         lineHeight: 20,
     },
 });

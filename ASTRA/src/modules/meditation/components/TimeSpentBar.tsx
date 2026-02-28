@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface TimeSpentBarProps {
     data: { date: string; minutes: number }[];
@@ -43,17 +44,14 @@ export function TimeSpentBar({ data }: TimeSpentBarProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 12,
     },
     title: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 8,
     },
     barRow: {
@@ -68,17 +66,17 @@ const styles = StyleSheet.create({
     },
     bar: {
         width: 14,
-        backgroundColor: '#1A1A1A',
+        backgroundColor: AstraColors.meditation,
         borderRadius: 3,
     },
     barLabel: {
         fontSize: 10,
-        color: '#666',
+        color: AstraColors.warmGray,
         marginTop: 2,
     },
     dayLabel: {
         fontSize: 10,
-        color: '#AAA',
+        color: AstraColors.mutedForeground,
     },
     empty: {
         height: 50,
@@ -87,6 +85,6 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 13,
-        color: '#AAA',
+        color: AstraColors.mutedForeground,
     },
 });

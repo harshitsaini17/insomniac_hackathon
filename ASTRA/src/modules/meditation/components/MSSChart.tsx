@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface MSSChartProps {
     data: { date: string; mss: number }[];
@@ -58,22 +59,19 @@ export function MSSChart({ data }: MSSChartProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 12,
     },
     title: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 8,
     },
     tooltip: {
         fontSize: 12,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         marginBottom: 6,
     },
     barRow: {
@@ -88,15 +86,15 @@ const styles = StyleSheet.create({
     },
     bar: {
         width: 16,
-        backgroundColor: '#D0D0D0',
+        backgroundColor: AstraColors.primaryLight,
         borderRadius: 4,
     },
     barActive: {
-        backgroundColor: '#1A1A1A',
+        backgroundColor: AstraColors.primary,
     },
     dayLabel: {
         fontSize: 10,
-        color: '#AAA',
+        color: AstraColors.mutedForeground,
         marginTop: 4,
     },
     empty: {
@@ -106,6 +104,6 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 13,
-        color: '#AAA',
+        color: AstraColors.mutedForeground,
     },
 });

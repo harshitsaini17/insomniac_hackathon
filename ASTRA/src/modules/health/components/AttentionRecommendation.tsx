@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import type { AttentionCapacity } from '@/types';
+import { AstraColors, AstraCard, AstraRadius, AstraShadow } from '@/constants/astraTheme';
 
 interface AttentionRecommendationProps {
     attention: AttentionCapacity;
@@ -68,62 +69,29 @@ export function AttentionRecommendation({
 }
 
 const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
-        padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
-        marginBottom: 12,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 8,
-    },
-    icon: {
-        fontSize: 20,
-        marginRight: 10,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#1A1A1A',
-    },
+    card: { ...AstraCard, padding: 16, marginBottom: 12 },
+    headerRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 8 },
+    icon: { fontSize: 20, marginRight: 10 },
+    label: { fontSize: 16, fontWeight: '600', color: AstraColors.foreground },
     description: {
-        fontSize: 14,
-        color: '#666',
-        lineHeight: 20,
-        marginBottom: 14,
+        fontSize: 14, color: AstraColors.warmGray, lineHeight: 20, marginBottom: 14,
     },
-    actionsRow: {
-        flexDirection: 'row',
-        gap: 10,
-    },
+    actionsRow: { flexDirection: 'row', gap: 10 },
     primaryBtn: {
-        backgroundColor: '#1A1A1A',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderRadius: 8,
-        flex: 1,
-        alignItems: 'center',
+        backgroundColor: AstraColors.primary,
+        paddingHorizontal: 16, paddingVertical: 10,
+        borderRadius: AstraRadius.md, flex: 1, alignItems: 'center',
+        ...AstraShadow.button,
     },
     primaryBtnText: {
-        color: '#FFF',
-        fontSize: 13,
-        fontWeight: '600',
+        color: AstraColors.primaryForeground, fontSize: 13, fontWeight: '600',
     },
     secondaryBtn: {
-        borderWidth: 1,
-        borderColor: '#CCC',
-        paddingHorizontal: 16,
-        paddingVertical: 10,
-        borderRadius: 8,
-        alignItems: 'center',
+        borderWidth: 1, borderColor: AstraColors.border,
+        paddingHorizontal: 16, paddingVertical: 10,
+        borderRadius: AstraRadius.md, alignItems: 'center',
     },
     secondaryBtnText: {
-        color: '#666',
-        fontSize: 13,
-        fontWeight: '500',
+        color: AstraColors.warmGray, fontSize: 13, fontWeight: '500',
     },
 });

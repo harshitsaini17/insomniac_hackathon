@@ -27,6 +27,7 @@ import {
 } from '../modules/focusTrainer/training/AttentionSwitching';
 import { NBACK_DEFAULTS, ATTENTION_SWITCH_DEFAULTS } from '../modules/focusTrainer/models/constants';
 import { insertCognitiveResult, getCognitiveHistory } from '../database/repository';
+import { AstraColors, AstraCard, AstraShadow, AstraRadius } from '../constants/astraTheme';
 
 type GameMode = 'menu' | 'nback' | 'switching';
 
@@ -146,7 +147,8 @@ export default function CognitiveTrainingScreen() {
 
         return (
             <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-                <Text style={styles.title}>🧠 Cognitive Training</Text>
+                <Text style={styles.caption}>COGNITIVE</Text>
+                <Text style={styles.title}>Training</Text>
                 <Text style={styles.subtitle}>
                     Strengthen your attention through scientifically-grounded exercises
                 </Text>
@@ -154,7 +156,9 @@ export default function CognitiveTrainingScreen() {
                 {/* N-Back Card */}
                 <TouchableOpacity style={styles.gameCard} onPress={startNBack}>
                     <View style={styles.gameHeader}>
-                        <Text style={styles.gameEmoji}>🔢</Text>
+                        <View style={styles.gameIconContainer}>
+                            <Text style={styles.gameIconText}>N</Text>
+                        </View>
                         <View style={{ flex: 1 }}>
                             <Text style={styles.gameTitle}>Dual N-Back</Text>
                             <Text style={styles.gameDesc}>
@@ -178,7 +182,9 @@ export default function CognitiveTrainingScreen() {
                 {/* Switching Card */}
                 <TouchableOpacity style={styles.gameCard} onPress={startSwitching}>
                     <View style={styles.gameHeader}>
-                        <Text style={styles.gameEmoji}>🔄</Text>
+                        <View style={[styles.gameIconContainer, { backgroundColor: AstraColors.blueLight }]}>
+                            <Text style={[styles.gameIconText, { color: AstraColors.blue }]}>⇄</Text>
+                        </View>
                         <View style={{ flex: 1 }}>
                             <Text style={styles.gameTitle}>Attention Switching</Text>
                             <Text style={styles.gameDesc}>
@@ -207,12 +213,17 @@ export default function CognitiveTrainingScreen() {
                 {/* Progress Summary */}
                 {trainingHistory.length > 0 && (
                     <View style={styles.progressCard}>
-                        <Text style={styles.progressTitle}>📈 Recent Progress</Text>
+                        <Text style={styles.progressTitle}>Recent Progress</Text>
                         {trainingHistory.slice(0, 5).map((r, i) => (
                             <View key={i} style={styles.historyRow}>
-                                <Text style={styles.historyType}>
-                                    {r.type === 'dual-n-back' ? '🔢' : '🔄'}
-                                </Text>
+                                <View style={[
+                                    styles.historyIcon,
+                                    { backgroundColor: r.type === 'dual-n-back' ? AstraColors.primaryLight : AstraColors.blueLight }
+                                ]}>
+                                    <Text style={styles.historyIconText}>
+                                        {r.type === 'dual-n-back' ? 'N' : '⇄'}
+                                    </Text>
+                                </View>
                                 <Text style={styles.historyAccuracy}>
                                     {(r.accuracy * 100).toFixed(0)}%
                                 </Text>
@@ -360,28 +371,33 @@ export default function CognitiveTrainingScreen() {
 // ── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0D1117' },
-    content: { padding: 16, paddingBottom: 100 },
+    container: { flex: 1, backgroundColor: AstraColors.background },
+    content: { padding: 20, paddingTop: 56, paddingBottom: 100 },
+    caption: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: AstraColors.mutedForeground,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        marginBottom: 4,
+    },
     title: {
-        fontSize: 28,
-        fontWeight: '800',
-        color: '#E6EDF3',
-        marginTop: 8,
+        fontSize: 30,
+        fontWeight: '700',
+        color: AstraColors.foreground,
+        letterSpacing: -0.5,
         marginBottom: 4,
     },
     subtitle: {
         fontSize: 14,
-        color: '#8B949E',
+        color: AstraColors.mutedForeground,
         marginBottom: 24,
         lineHeight: 20,
     },
     gameCard: {
-        backgroundColor: '#161B22',
-        borderRadius: 16,
+        ...AstraCard,
         padding: 20,
         marginBottom: 16,
-        borderWidth: 1,
-        borderColor: '#21262D',
     },
     gameHeader: {
         flexDirection: 'row',
@@ -389,56 +405,76 @@ const styles = StyleSheet.create({
         gap: 14,
         marginBottom: 12,
     },
-    gameEmoji: { fontSize: 36 },
-    gameTitle: { fontSize: 18, fontWeight: '700', color: '#E6EDF3' },
-    gameDesc: { fontSize: 13, color: '#8B949E', marginTop: 2 },
+    gameIconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 14,
+        backgroundColor: AstraColors.primaryLight,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    gameIconText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: AstraColors.primary,
+    },
+    gameTitle: { fontSize: 18, fontWeight: '700', color: AstraColors.foreground },
+    gameDesc: { fontSize: 13, color: AstraColors.mutedForeground, marginTop: 2 },
     gameStats: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 12,
     },
-    gameStat: { fontSize: 13, color: '#58A6FF' },
+    gameStat: { fontSize: 13, color: AstraColors.blue },
     playBtn: {
-        backgroundColor: '#1A3A2A',
+        backgroundColor: AstraColors.primaryLight,
         borderRadius: 8,
         paddingVertical: 10,
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: '#238636',
+        borderColor: 'rgba(92,138,108,0.2)',
     },
     playBtnText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#3FB950',
+        color: AstraColors.primary,
     },
     progressCard: {
-        backgroundColor: '#161B22',
-        borderRadius: 16,
+        ...AstraCard,
         padding: 20,
-        borderWidth: 1,
-        borderColor: '#21262D',
     },
     progressTitle: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#E6EDF3',
+        color: AstraColors.foreground,
         marginBottom: 14,
     },
     historyRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 16,
+        gap: 12,
         marginBottom: 8,
     },
-    historyType: { fontSize: 18 },
-    historyAccuracy: { fontSize: 14, color: '#3FB950', fontWeight: '600', width: 45 },
-    historyRT: { fontSize: 13, color: '#8B949E', width: 55 },
-    historyLevel: { fontSize: 13, color: '#58A6FF' },
+    historyIcon: {
+        width: 28,
+        height: 28,
+        borderRadius: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    historyIconText: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: AstraColors.primary,
+    },
+    historyAccuracy: { fontSize: 14, color: AstraColors.primary, fontWeight: '600', width: 45 },
+    historyRT: { fontSize: 13, color: AstraColors.mutedForeground, width: 55 },
+    historyLevel: { fontSize: 13, color: AstraColors.blue },
 
     // ── Game View Styles ───────────────────────────────────────────────────
     gameContainer: {
         flex: 1,
-        backgroundColor: '#0D1117',
+        backgroundColor: AstraColors.background,
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,
@@ -449,7 +485,7 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 30,
     },
-    gameInfoText: { fontSize: 14, color: '#8B949E' },
+    gameInfoText: { fontSize: 14, color: AstraColors.mutedForeground },
 
     // N-Back grid
     grid: {
@@ -463,14 +499,14 @@ const styles = StyleSheet.create({
     gridCell: {
         width: 74,
         height: 74,
-        backgroundColor: '#161B22',
-        borderRadius: 12,
+        backgroundColor: AstraColors.card,
+        borderRadius: AstraRadius.md,
         borderWidth: 1,
-        borderColor: '#21262D',
+        borderColor: AstraColors.border,
     },
     gridCellActive: {
-        backgroundColor: '#1F6FEB',
-        borderColor: '#58A6FF',
+        backgroundColor: AstraColors.blue,
+        borderColor: AstraColors.blue,
     },
     nbackButtons: {
         flexDirection: 'row',
@@ -479,38 +515,32 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     matchBtn: {
-        backgroundColor: '#161B22',
-        borderRadius: 12,
+        ...AstraCard,
         paddingHorizontal: 20,
         paddingVertical: 14,
-        borderWidth: 1,
-        borderColor: '#30363D',
         minWidth: 140,
         alignItems: 'center',
     },
-    bothBtn: { borderColor: '#3FB950' },
-    noneBtn: { borderColor: '#F85149' },
-    matchBtnText: { fontSize: 14, fontWeight: '600', color: '#E6EDF3' },
+    bothBtn: { borderColor: AstraColors.primary },
+    noneBtn: { borderColor: AstraColors.destructive },
+    matchBtnText: { fontSize: 14, fontWeight: '600', color: AstraColors.foreground },
 
     // Switching task
     taskIndicator: {
         marginBottom: 30,
         paddingHorizontal: 24,
         paddingVertical: 12,
-        backgroundColor: '#161B22',
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: '#30363D',
+        ...AstraCard,
     },
-    taskLabel: { fontSize: 18, color: '#8B949E' },
+    taskLabel: { fontSize: 18, color: AstraColors.mutedForeground },
     taskHighlight: {
-        color: '#FFD740',
+        color: AstraColors.warning,
         fontWeight: '700',
     },
     stimulus: {
         width: 120,
         height: 120,
-        borderRadius: 16,
+        borderRadius: AstraRadius.lg,
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 40,
@@ -531,18 +561,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     answerBtn: {
-        backgroundColor: '#161B22',
-        borderRadius: 12,
+        ...AstraCard,
         paddingHorizontal: 24,
         paddingVertical: 14,
-        borderWidth: 1,
-        borderColor: '#30363D',
         minWidth: 100,
         alignItems: 'center',
     },
     answerText: {
         fontSize: 14,
         fontWeight: '600',
-        color: '#E6EDF3',
+        color: AstraColors.foreground,
     },
 });

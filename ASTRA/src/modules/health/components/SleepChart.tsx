@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import type { HealthDayRecord } from '@/types';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface SleepChartProps {
     records: HealthDayRecord[];
@@ -51,10 +52,10 @@ export function SleepChart({ records }: SleepChartProps) {
                                             height: `${Math.min(100, height)}%`,
                                             backgroundColor:
                                                 r.input.sleep_hours >= 7
-                                                    ? '#555'
+                                                    ? AstraColors.healthSleep
                                                     : r.input.sleep_hours >= 6
-                                                        ? '#999'
-                                                        : '#CCC',
+                                                        ? AstraColors.blueMuted
+                                                        : AstraColors.muted,
                                         },
                                     ]}
                                 />
@@ -71,58 +72,14 @@ export function SleepChart({ records }: SleepChartProps) {
 }
 
 const styles = StyleSheet.create({
-    card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
-        padding: 12,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
-        flex: 1,
-    },
-    title: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#1A1A1A',
-        marginBottom: 6,
-    },
-    tooltip: {
-        fontSize: 11,
-        color: '#1A1A1A',
-        fontWeight: '600',
-        marginBottom: 4,
-    },
-    barsRow: {
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        height: 80,
-        justifyContent: 'space-around',
-    },
-    barWrapper: {
-        alignItems: 'center',
-        flex: 1,
-    },
-    barContainer: {
-        flex: 1,
-        width: '50%',
-        justifyContent: 'flex-end',
-    },
-    bar: {
-        width: '100%',
-        borderRadius: 2,
-        minHeight: 2,
-    },
-    xLabel: {
-        fontSize: 9,
-        color: '#AAA',
-        marginTop: 3,
-    },
-    emptyState: {
-        height: 80,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    emptyText: {
-        fontSize: 12,
-        color: '#AAA',
-    },
+    card: { ...AstraCard, padding: 12, flex: 1 },
+    title: { fontSize: 12, fontWeight: '600', color: AstraColors.foreground, marginBottom: 6 },
+    tooltip: { fontSize: 11, color: AstraColors.healthSleep, fontWeight: '600', marginBottom: 4 },
+    barsRow: { flexDirection: 'row', alignItems: 'flex-end', height: 80, justifyContent: 'space-around' },
+    barWrapper: { alignItems: 'center', flex: 1 },
+    barContainer: { flex: 1, width: '50%', justifyContent: 'flex-end' },
+    bar: { width: '100%', borderRadius: 2, minHeight: 2 },
+    xLabel: { fontSize: 9, color: AstraColors.mutedForeground, marginTop: 3 },
+    emptyState: { height: 80, justifyContent: 'center', alignItems: 'center' },
+    emptyText: { fontSize: 12, color: AstraColors.mutedForeground },
 });

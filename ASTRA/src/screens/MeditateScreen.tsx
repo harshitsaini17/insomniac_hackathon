@@ -5,6 +5,7 @@ import { useHealthStore } from '@/store/health-store';
 import { useUserStore } from '@/store/user-store';
 import { computeFullScores } from '@/engine/meditation-scores';
 import type { MeditationType, MeditationIntent, DailyMeditationInput, ExperienceLevel } from '@/types';
+import { AstraColors, AstraCard } from '../constants/astraTheme';
 
 // Components
 import { MSSBadge } from '@/components/meditate/MSSBadge';
@@ -56,6 +57,10 @@ export default function MeditateScreen() {
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+            {/* Header */}
+            <Text style={styles.headerCaption}>MINDFULNESS</Text>
+            <Text style={styles.headerTitle}>Meditate</Text>
+
             {/* MSS Badge */}
             <MSSBadge score={computed.MSS} />
 
@@ -126,19 +131,32 @@ export default function MeditateScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#FAFAFA',
+        backgroundColor: AstraColors.background,
     },
     content: {
         padding: 20,
+        paddingTop: 56,
         paddingBottom: 40,
+    },
+    headerCaption: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: AstraColors.mutedForeground,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        marginBottom: 4,
+    },
+    headerTitle: {
+        fontSize: 30,
+        fontWeight: '700',
+        color: AstraColors.foreground,
+        letterSpacing: -0.5,
+        marginBottom: 16,
     },
     statsRow: {
         flexDirection: 'row',
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 16,
     },
     stat: {
@@ -147,16 +165,16 @@ const styles = StyleSheet.create({
     },
     statDivider: {
         width: 1,
-        backgroundColor: '#F0F0F0',
+        backgroundColor: AstraColors.border,
     },
     statValue: {
         fontSize: 28,
         fontWeight: '700',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
     },
     statLabel: {
         fontSize: 11,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         marginTop: 2,
         textTransform: 'uppercase',
         letterSpacing: 0.5,
@@ -167,7 +185,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 12,
         marginTop: 4,
     },

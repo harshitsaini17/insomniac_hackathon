@@ -16,6 +16,7 @@ import {
     getUserProfile,
 } from '../storage/mmkvStore';
 import OnboardingScreen from '../screens/OnboardingScreen';
+import { AstraColors } from '../constants/astraTheme';
 
 export default function App() {
     const [isLoading, setIsLoading] = useState(true);
@@ -86,9 +87,9 @@ export default function App() {
     if (isLoading) {
         return (
             <View style={styles.loading}>
-                <StatusBar barStyle="light-content" backgroundColor="#0D1117" />
+                <StatusBar barStyle="dark-content" backgroundColor={AstraColors.background} />
                 <Text style={styles.logo}>ASTRA</Text>
-                <ActivityIndicator size="large" color="#58A6FF" />
+                <ActivityIndicator size="large" color={AstraColors.primary} />
                 <Text style={styles.loadingText}>Initializing Focus Trainer...</Text>
             </View>
         );
@@ -97,7 +98,7 @@ export default function App() {
     if (showOnboarding) {
         return (
             <>
-                <StatusBar barStyle="light-content" backgroundColor="#0D1117" />
+                <StatusBar barStyle="dark-content" backgroundColor={AstraColors.background} />
                 <OnboardingScreen onComplete={handleOnboardingComplete} />
             </>
         );
@@ -105,7 +106,7 @@ export default function App() {
 
     return (
         <NavigationContainer>
-            <StatusBar barStyle="light-content" backgroundColor="#0D1117" />
+            <StatusBar barStyle="dark-content" backgroundColor={AstraColors.background} />
             <Navigation />
         </NavigationContainer>
     );
@@ -114,20 +115,20 @@ export default function App() {
 const styles = StyleSheet.create({
     loading: {
         flex: 1,
-        backgroundColor: '#0D1117',
+        backgroundColor: AstraColors.background,
         alignItems: 'center',
         justifyContent: 'center',
     },
     logo: {
         fontSize: 48,
         fontWeight: '800',
-        color: '#E6EDF3',
+        color: AstraColors.primary,
         letterSpacing: 6,
         marginBottom: 24,
     },
     loadingText: {
         fontSize: 14,
-        color: '#8B949E',
+        color: AstraColors.mutedForeground,
         marginTop: 16,
     },
 });

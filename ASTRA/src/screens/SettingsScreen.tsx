@@ -16,6 +16,7 @@ import { useFocusStore } from '../modules/focusTrainer/store/focusStore';
 import { computeImpulsivityIndex } from '../modules/focusTrainer/math/personalityStrictness';
 import { PersonalityProfile, BlockingLevel } from '../modules/focusTrainer/models/types';
 import { setPersonalityProfile, setModuleEnabled } from '../storage/mmkvStore';
+import { AstraColors, AstraCard, AstraRadius } from '../constants/astraTheme';
 
 export default function SettingsScreen() {
     const {
@@ -107,7 +108,8 @@ export default function SettingsScreen() {
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-            <Text style={styles.title}>⚙️ Settings</Text>
+            <Text style={styles.caption}>PREFERENCES</Text>
+            <Text style={styles.title}>Settings</Text>
 
             {/* ── Module Toggle ──────────────────────────────────────────────── */}
             <View style={styles.card}>
@@ -116,15 +118,15 @@ export default function SettingsScreen() {
                     <Switch
                         value={isModuleEnabled}
                         onValueChange={toggleModule}
-                        trackColor={{ false: '#21262D', true: '#238636' }}
-                        thumbColor="#E6EDF3"
+                        trackColor={{ false: AstraColors.muted, true: AstraColors.primaryLight }}
+                        thumbColor={isModuleEnabled ? AstraColors.primary : AstraColors.mutedForeground}
                     />
                 </View>
             </View>
 
             {/* ── Personality Calibration ────────────────────────────────────── */}
             <View style={styles.card}>
-                <Text style={styles.sectionTitle}>🧬 Personality Calibration</Text>
+                <Text style={styles.sectionTitle}>Personality Calibration</Text>
                 <Text style={styles.sectionDesc}>
                     Adjust these to match your self-assessment. They determine how
                     strict the blocking recommendations are.
@@ -193,7 +195,7 @@ export default function SettingsScreen() {
                                 styles.scaleFill,
                                 {
                                     width: `${((neuroticism - 1) / 6) * 100}%`,
-                                    backgroundColor: '#FFD740',
+                                    backgroundColor: AstraColors.warning,
                                 },
                             ]}
                         />
@@ -215,7 +217,7 @@ export default function SettingsScreen() {
 
             {/* ── Blocking Override ──────────────────────────────────────────── */}
             <View style={styles.card}>
-                <Text style={styles.sectionTitle}>🔒 Blocking Level Override</Text>
+                <Text style={styles.sectionTitle}>Blocking Level Override</Text>
                 <Text style={styles.sectionDesc}>
                     Override the automatic blocking level. You always have control.
                 </Text>
@@ -244,14 +246,14 @@ export default function SettingsScreen() {
 
             {/* ── Feature Toggles ────────────────────────────────────────────── */}
             <View style={styles.card}>
-                <Text style={styles.sectionTitle}>📋 Features</Text>
+                <Text style={styles.sectionTitle}>Features</Text>
                 <View style={styles.toggleRow}>
                     <Text style={styles.toggleLabel}>Usage Tracking</Text>
                     <Switch
                         value={usageTracking}
                         onValueChange={setUsageTracking}
-                        trackColor={{ false: '#21262D', true: '#238636' }}
-                        thumbColor="#E6EDF3"
+                        trackColor={{ false: AstraColors.muted, true: AstraColors.primaryLight }}
+                        thumbColor={usageTracking ? AstraColors.primary : AstraColors.mutedForeground}
                     />
                 </View>
                 <View style={styles.toggleRow}>
@@ -259,8 +261,8 @@ export default function SettingsScreen() {
                     <Switch
                         value={healthTracking}
                         onValueChange={setHealthTracking}
-                        trackColor={{ false: '#21262D', true: '#238636' }}
-                        thumbColor="#E6EDF3"
+                        trackColor={{ false: AstraColors.muted, true: AstraColors.primaryLight }}
+                        thumbColor={healthTracking ? AstraColors.primary : AstraColors.mutedForeground}
                     />
                 </View>
                 <View style={styles.toggleRow}>
@@ -268,28 +270,28 @@ export default function SettingsScreen() {
                     <Switch
                         value={cogTraining}
                         onValueChange={setCogTraining}
-                        trackColor={{ false: '#21262D', true: '#238636' }}
-                        thumbColor="#E6EDF3"
+                        trackColor={{ false: AstraColors.muted, true: AstraColors.primaryLight }}
+                        thumbColor={cogTraining ? AstraColors.primary : AstraColors.mutedForeground}
                     />
                 </View>
             </View>
 
             {/* ── Privacy ────────────────────────────────────────────────────── */}
             <View style={styles.card}>
-                <Text style={styles.sectionTitle}>🔐 Privacy</Text>
+                <Text style={styles.sectionTitle}>Privacy</Text>
                 <Text style={styles.privacyText}>
-                    ✅ All data stays on your device{'\n'}
-                    ✅ No message content is ever read{'\n'}
-                    ✅ No browsing content is ever read{'\n'}
-                    ✅ Only app metadata is collected{'\n'}
-                    ✅ You can disable any feature anytime{'\n'}
-                    ✅ You can export or delete all data
+                    ✓ All data stays on your device{'\n'}
+                    ✓ No message content is ever read{'\n'}
+                    ✓ No browsing content is ever read{'\n'}
+                    ✓ Only app metadata is collected{'\n'}
+                    ✓ You can disable any feature anytime{'\n'}
+                    ✓ You can export or delete all data
                 </Text>
             </View>
 
             {/* ── Data Management ────────────────────────────────────────────── */}
             <View style={styles.card}>
-                <Text style={styles.sectionTitle}>💾 Data</Text>
+                <Text style={styles.sectionTitle}>Data</Text>
                 <TouchableOpacity style={styles.dataBtn} onPress={handleExport}>
                     <Text style={styles.dataBtnText}>Export All Data</Text>
                 </TouchableOpacity>
@@ -309,81 +311,90 @@ export default function SettingsScreen() {
 // ── Styles ───────────────────────────────────────────────────────────────────
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#0D1117' },
-    content: { padding: 16, paddingBottom: 100 },
+    container: { flex: 1, backgroundColor: AstraColors.background },
+    content: { padding: 20, paddingTop: 56, paddingBottom: 100 },
+    caption: {
+        fontSize: 11,
+        fontWeight: '600',
+        color: AstraColors.mutedForeground,
+        letterSpacing: 1.5,
+        textTransform: 'uppercase',
+        marginBottom: 4,
+    },
     title: {
-        fontSize: 28, fontWeight: '800', color: '#E6EDF3',
-        marginTop: 8, marginBottom: 16,
+        fontSize: 30, fontWeight: '700', color: AstraColors.foreground,
+        letterSpacing: -0.5, marginBottom: 16,
     },
     card: {
-        backgroundColor: '#161B22', borderRadius: 16, padding: 20,
-        marginBottom: 12, borderWidth: 1, borderColor: '#21262D',
+        ...AstraCard,
+        padding: 20,
+        marginBottom: 12,
     },
     sectionTitle: {
-        fontSize: 16, fontWeight: '600', color: '#E6EDF3', marginBottom: 8,
+        fontSize: 16, fontWeight: '600', color: AstraColors.foreground, marginBottom: 8,
     },
     sectionDesc: {
-        fontSize: 13, color: '#8B949E', marginBottom: 16, lineHeight: 18,
+        fontSize: 13, color: AstraColors.mutedForeground, marginBottom: 16, lineHeight: 18,
     },
     toggleRow: {
         flexDirection: 'row', justifyContent: 'space-between',
         alignItems: 'center', paddingVertical: 8,
     },
-    toggleLabel: { fontSize: 15, color: '#E6EDF3' },
+    toggleLabel: { fontSize: 15, color: AstraColors.foreground },
     sliderRow: {
         flexDirection: 'row', justifyContent: 'space-between',
         alignItems: 'center',
     },
-    traitLabel: { fontSize: 14, color: '#E6EDF3', fontWeight: '500' },
+    traitLabel: { fontSize: 14, color: AstraColors.foreground, fontWeight: '500' },
     sliderControls: { flexDirection: 'row', alignItems: 'center', gap: 8 },
     sliderBtn: {
         width: 36, height: 36, borderRadius: 18,
-        backgroundColor: '#21262D', alignItems: 'center',
-        justifyContent: 'center', borderWidth: 1, borderColor: '#30363D',
+        backgroundColor: AstraColors.muted, alignItems: 'center',
+        justifyContent: 'center', borderWidth: 1, borderColor: AstraColors.border,
     },
-    sliderBtnText: { fontSize: 20, color: '#E6EDF3', fontWeight: '300' },
+    sliderBtnText: { fontSize: 20, color: AstraColors.foreground, fontWeight: '300' },
     sliderValue: {
         width: 36, height: 36, borderRadius: 8,
-        backgroundColor: '#0D1117', alignItems: 'center',
+        backgroundColor: AstraColors.primaryLight, alignItems: 'center',
         justifyContent: 'center',
     },
-    sliderValueText: { fontSize: 18, color: '#58A6FF', fontWeight: '700' },
+    sliderValueText: { fontSize: 18, color: AstraColors.primary, fontWeight: '700' },
     scaleRow: {
         flexDirection: 'row', alignItems: 'center', marginTop: 8, gap: 8,
     },
-    scaleLabel: { fontSize: 10, color: '#8B949E', width: 60 },
+    scaleLabel: { fontSize: 10, color: AstraColors.mutedForeground, width: 60 },
     scaleBar: {
-        flex: 1, height: 4, backgroundColor: '#21262D', borderRadius: 2,
+        flex: 1, height: 4, backgroundColor: AstraColors.muted, borderRadius: 2,
         overflow: 'hidden',
     },
     scaleFill: {
-        height: '100%', backgroundColor: '#58A6FF', borderRadius: 2,
+        height: '100%', backgroundColor: AstraColors.primary, borderRadius: 2,
     },
     strictnessResult: {
-        marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: '#21262D',
+        marginTop: 16, paddingTop: 16, borderTopWidth: 1, borderTopColor: AstraColors.border,
     },
-    strictnessLabel: { fontSize: 14, color: '#E6EDF3' },
-    strictnessLevel: { fontSize: 13, color: '#8B949E', marginTop: 4 },
+    strictnessLabel: { fontSize: 14, color: AstraColors.foreground },
+    strictnessLevel: { fontSize: 13, color: AstraColors.mutedForeground, marginTop: 4 },
     levelRow: { flexDirection: 'row', gap: 8 },
     levelBtn: {
         flex: 1, paddingVertical: 10, borderRadius: 8,
-        backgroundColor: '#21262D', alignItems: 'center',
-        borderWidth: 1, borderColor: '#30363D',
+        backgroundColor: AstraColors.muted, alignItems: 'center',
+        borderWidth: 1, borderColor: AstraColors.border,
     },
     levelBtnActive: {
-        backgroundColor: '#1A3A2A', borderColor: '#238636',
+        backgroundColor: AstraColors.primaryLight, borderColor: 'rgba(92,138,108,0.3)',
     },
-    levelBtnText: { fontSize: 13, color: '#8B949E', fontWeight: '600' },
-    levelBtnTextActive: { color: '#3FB950' },
+    levelBtnText: { fontSize: 13, color: AstraColors.mutedForeground, fontWeight: '600' },
+    levelBtnTextActive: { color: AstraColors.primary },
     privacyText: {
-        fontSize: 14, color: '#8B949E', lineHeight: 24,
+        fontSize: 14, color: AstraColors.mutedForeground, lineHeight: 24,
     },
     dataBtn: {
         paddingVertical: 12, borderRadius: 8,
-        backgroundColor: '#21262D', alignItems: 'center',
-        marginBottom: 8, borderWidth: 1, borderColor: '#30363D',
+        backgroundColor: AstraColors.muted, alignItems: 'center',
+        marginBottom: 8, borderWidth: 1, borderColor: AstraColors.border,
     },
-    dataBtnText: { fontSize: 14, fontWeight: '600', color: '#E6EDF3' },
-    deleteBtn: { borderColor: '#F85149' },
-    deleteBtnText: { color: '#F85149' },
+    dataBtnText: { fontSize: 14, fontWeight: '600', color: AstraColors.foreground },
+    deleteBtn: { borderColor: AstraColors.destructive },
+    deleteBtnText: { color: AstraColors.destructive },
 });

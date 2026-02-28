@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, Modal } from 'react-native';
+import { AstraColors, AstraCard, AstraRadius } from '@/constants/astraTheme';
 
 interface RatingModalProps {
     visible: boolean;
@@ -63,26 +64,28 @@ export function RatingModal({ visible, onSubmit, onCancel }: RatingModalProps) {
 const styles = StyleSheet.create({
     overlay: {
         flex: 1,
-        backgroundColor: 'rgba(0,0,0,0.3)',
+        backgroundColor: 'rgba(36,39,44,0.3)',
         justifyContent: 'center',
         alignItems: 'center',
         padding: 24,
     },
     modal: {
-        backgroundColor: '#FFF',
-        borderRadius: 16,
+        backgroundColor: AstraColors.card,
+        borderRadius: AstraRadius.lg,
         padding: 24,
         width: '100%',
+        borderWidth: 1,
+        borderColor: AstraColors.border,
     },
     title: {
         fontSize: 20,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         textAlign: 'center',
     },
     subtitle: {
         fontSize: 14,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         textAlign: 'center',
         marginTop: 4,
         marginBottom: 24,
@@ -95,28 +98,28 @@ const styles = StyleSheet.create({
     ratingItem: {
         alignItems: 'center',
         padding: 10,
-        borderRadius: 8,
+        borderRadius: AstraRadius.md,
         flex: 1,
         marginHorizontal: 2,
     },
     ratingItemActive: {
-        backgroundColor: '#1A1A1A',
+        backgroundColor: AstraColors.primary,
     },
     ratingNumber: {
         fontSize: 24,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
     },
     ratingNumberActive: {
-        color: '#FFF',
+        color: AstraColors.primaryForeground,
     },
     ratingLabel: {
         fontSize: 10,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         marginTop: 2,
     },
     ratingLabelActive: {
-        color: '#CCC',
+        color: 'rgba(255,255,255,0.7)',
     },
     actions: {
         flexDirection: 'row',
@@ -125,28 +128,28 @@ const styles = StyleSheet.create({
     cancelBtn: {
         flex: 1,
         paddingVertical: 14,
-        borderRadius: 8,
+        borderRadius: AstraRadius.md,
         borderWidth: 1,
-        borderColor: '#E0E0E0',
+        borderColor: AstraColors.border,
         alignItems: 'center',
     },
     cancelText: {
-        color: '#666',
+        color: AstraColors.mutedForeground,
         fontSize: 16,
         fontWeight: '500',
     },
     submitBtn: {
         flex: 1,
         paddingVertical: 14,
-        borderRadius: 8,
-        backgroundColor: '#1A1A1A',
+        borderRadius: AstraRadius.md,
+        backgroundColor: AstraColors.primary,
         alignItems: 'center',
     },
     submitDisabled: {
         opacity: 0.3,
     },
     submitText: {
-        color: '#FFF',
+        color: AstraColors.primaryForeground,
         fontSize: 16,
         fontWeight: '600',
     },

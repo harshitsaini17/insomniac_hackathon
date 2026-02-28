@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { AstraColors, AstraCard } from '@/constants/astraTheme';
 
 interface HRVScatterProps {
     data: { date: string; delta: number }[];
@@ -34,7 +35,7 @@ export function HRVScatter({ data }: HRVScatterProps) {
                                 {
                                     left: `${(i / Math.max(data.slice(-7).length - 1, 1)) * 85 + 5}%`,
                                     bottom: `${50 + yPct}%`,
-                                    backgroundColor: d.delta >= 0 ? '#1A1A1A' : '#CCC',
+                                    backgroundColor: d.delta >= 0 ? AstraColors.healthHRV : AstraColors.muted,
                                 },
                             ]}
                         />
@@ -47,18 +48,15 @@ export function HRVScatter({ data }: HRVScatterProps) {
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 12,
         flex: 1,
     },
     title: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 8,
     },
     plotArea: {
@@ -71,7 +69,7 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         height: 1,
-        backgroundColor: '#E0E0E0',
+        backgroundColor: AstraColors.border,
     },
     dot: {
         position: 'absolute',
@@ -88,6 +86,6 @@ const styles = StyleSheet.create({
     },
     emptyText: {
         fontSize: 12,
-        color: '#AAA',
+        color: AstraColors.mutedForeground,
     },
 });

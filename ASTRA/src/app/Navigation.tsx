@@ -1,10 +1,11 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Navigation — Bottom Tab Navigator
+// Navigation — Bottom Tab Navigator (ASTRA Design System)
 // ─────────────────────────────────────────────────────────────────────────────
 
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { AstraColors, AstraShadow } from '../constants/astraTheme';
 import DashboardScreen from '../screens/DashboardScreen';
 import FocusSessionScreen from '../screens/FocusSessionScreen';
 import CognitiveTrainingScreen from '../screens/CognitiveTrainingScreen';
@@ -15,14 +16,37 @@ import MeditateScreen from '../screens/MeditateScreen';
 
 const Tab = createBottomTabNavigator();
 
+// Clean icon component — text-based, matching Apple style
+function TabIcon({ label, focused }: { label: string; focused: boolean }) {
+    return (
+        <Text
+            style={[
+                styles.tabIcon,
+                { color: focused ? AstraColors.primary : AstraColors.mutedForeground },
+            ]}
+        >
+            {label}
+        </Text>
+    );
+}
+
+const TAB_ICONS: Record<string, string> = {
+    Dashboard: '⌂',
+    FocusSession: '◎',
+    Training: '◆',
+    Meditate: '❋',
+    Health: '♥',
+    Settings: '⚙',
+};
+
 export default function Navigation() {
     return (
         <Tab.Navigator
             screenOptions={{
                 headerShown: false,
                 tabBarStyle: styles.tabBar,
-                tabBarActiveTintColor: '#58A6FF',
-                tabBarInactiveTintColor: '#8B949E',
+                tabBarActiveTintColor: AstraColors.primary,
+                tabBarInactiveTintColor: AstraColors.mutedForeground,
                 tabBarLabelStyle: styles.tabLabel,
             }}
         >
@@ -30,8 +54,9 @@ export default function Navigation() {
                 name="Dashboard"
                 component={DashboardScreen}
                 options={{
+                    tabBarLabel: 'Insights',
                     tabBarIcon: ({ focused }) => (
-                        <Text style={styles.tabIcon}>{focused ? '🏠' : '🏠'}</Text>
+                        <TabIcon label={TAB_ICONS.Dashboard} focused={focused} />
                     ),
                 }}
             />
@@ -41,7 +66,7 @@ export default function Navigation() {
                 options={{
                     tabBarLabel: 'Focus',
                     tabBarIcon: ({ focused }) => (
-                        <Text style={styles.tabIcon}>{focused ? '🎯' : '🎯'}</Text>
+                        <TabIcon label={TAB_ICONS.FocusSession} focused={focused} />
                     ),
                 }}
             />
@@ -51,7 +76,7 @@ export default function Navigation() {
                 options={{
                     tabBarLabel: 'Train',
                     tabBarIcon: ({ focused }) => (
-                        <Text style={styles.tabIcon}>{focused ? '🧠' : '🧠'}</Text>
+                        <TabIcon label={TAB_ICONS.Training} focused={focused} />
                     ),
                 }}
             />
@@ -61,7 +86,7 @@ export default function Navigation() {
                 options={{
                     tabBarLabel: 'Meditate',
                     tabBarIcon: ({ focused }) => (
-                        <Text style={styles.tabIcon}>{focused ? '🧘' : '🧘'}</Text>
+                        <TabIcon label={TAB_ICONS.Meditate} focused={focused} />
                     ),
                 }}
             />
@@ -71,7 +96,7 @@ export default function Navigation() {
                 options={{
                     tabBarLabel: 'Health',
                     tabBarIcon: ({ focused }) => (
-                        <Text style={styles.tabIcon}>{focused ? '❤️' : '❤️'}</Text>
+                        <TabIcon label={TAB_ICONS.Health} focused={focused} />
                     ),
                 }}
             />
@@ -80,7 +105,7 @@ export default function Navigation() {
                 component={SettingsScreen}
                 options={{
                     tabBarIcon: ({ focused }) => (
-                        <Text style={styles.tabIcon}>{focused ? '⚙️' : '⚙️'}</Text>
+                        <TabIcon label={TAB_ICONS.Settings} focused={focused} />
                     ),
                 }}
             />
@@ -90,16 +115,17 @@ export default function Navigation() {
 
 const styles = StyleSheet.create({
     tabBar: {
-        backgroundColor: '#161B22',
-        borderTopColor: '#21262D',
-        borderTopWidth: 1,
+        backgroundColor: AstraColors.surfaceElevated,
+        borderTopColor: AstraColors.border,
+        borderTopWidth: 0.5,
         height: 70,
         paddingBottom: 10,
         paddingTop: 8,
+        ...AstraShadow.card,
     },
     tabLabel: {
-        fontSize: 11,
-        fontWeight: '600',
+        fontSize: 10,
+        fontWeight: '500',
     },
     tabIcon: {
         fontSize: 22,

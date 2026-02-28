@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import type { MeditationIntent } from '@/types';
+import { AstraColors, AstraRadius } from '@/constants/astraTheme';
 
 interface IntentPickerProps {
     selected: MeditationIntent;
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 13,
         fontWeight: '600',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
         marginBottom: 8,
     },
     row: {
@@ -66,25 +67,25 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 14,
         paddingVertical: 8,
-        borderRadius: 20,
-        backgroundColor: '#FFF',
+        borderRadius: AstraRadius.full,
+        backgroundColor: AstraColors.card,
         borderWidth: 1,
-        borderColor: '#E0E0E0',
+        borderColor: AstraColors.border,
         gap: 6,
     },
     chipActive: {
-        backgroundColor: '#1A1A1A',
-        borderColor: '#1A1A1A',
+        backgroundColor: AstraColors.primaryLight,
+        borderColor: 'rgba(92,138,108,0.3)',
     },
     chipIcon: {
         fontSize: 14,
     },
     chipText: {
         fontSize: 13,
-        color: '#666',
+        color: AstraColors.mutedForeground,
         fontWeight: '500',
     },
     chipTextActive: {
-        color: '#FFF',
+        color: AstraColors.primary,
     },
 });

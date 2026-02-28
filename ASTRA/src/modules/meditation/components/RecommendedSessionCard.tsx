@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import type { MeditationType, MeditationFlag } from '@/types';
 import { MEDITATION_LABELS } from '@/types';
+import { AstraColors, AstraCard, AstraShadow, AstraRadius } from '@/constants/astraTheme';
 
 interface RecommendedSessionCardProps {
     type: MeditationType;
@@ -64,11 +65,8 @@ export function RecommendedSessionCard({
 
 const styles = StyleSheet.create({
     card: {
-        backgroundColor: '#FFF',
-        borderRadius: 12,
+        ...AstraCard,
         padding: 16,
-        borderWidth: 1,
-        borderColor: '#F0F0F0',
         marginBottom: 12,
     },
     header: {
@@ -86,11 +84,11 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 18,
         fontWeight: '700',
-        color: '#1A1A1A',
+        color: AstraColors.foreground,
     },
     subtitle: {
         fontSize: 13,
-        color: '#888',
+        color: AstraColors.mutedForeground,
         marginTop: 2,
     },
     flagRow: {
@@ -100,30 +98,31 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     flag: {
-        backgroundColor: '#F5F5F5',
+        backgroundColor: AstraColors.muted,
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 6,
     },
     flagWarn: {
-        backgroundColor: '#FFF3E0',
+        backgroundColor: 'rgba(212,162,58,0.12)',
     },
     flagBoost: {
-        backgroundColor: '#E8F5E9',
+        backgroundColor: AstraColors.primaryLight,
     },
     flagText: {
         fontSize: 11,
-        color: '#555',
+        color: AstraColors.warmGray,
         fontWeight: '500',
     },
     cta: {
-        backgroundColor: '#1A1A1A',
-        borderRadius: 10,
+        backgroundColor: AstraColors.primary,
+        borderRadius: AstraRadius.md,
         paddingVertical: 14,
         alignItems: 'center',
+        ...AstraShadow.button,
     },
     ctaText: {
-        color: '#FFF',
+        color: AstraColors.primaryForeground,
         fontSize: 15,
         fontWeight: '700',
     },
