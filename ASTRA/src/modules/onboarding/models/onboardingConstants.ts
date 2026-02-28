@@ -446,6 +446,18 @@ export const OPEN_ENDED_QUESTIONS: QuestionItem[] = [
         ],
         group: 'open_weakness',
     },
+    {
+        id: 'personalRelationshipGoal',
+        type: 'open_ended',
+        prompt: 'What are your personal or relationship goals? (e.g., getting more confident, finding a partner, etc.)',
+        required: true,
+        examples: [
+            'I want to build confidence to find a girlfriend',
+            'I want to be more social and outgoing',
+            'Focusing on myself for now',
+        ],
+        group: 'open_relationship',
+    },
 ];
 
 // ── All Questions (ordered) ──────────────────────────────────────────────────
