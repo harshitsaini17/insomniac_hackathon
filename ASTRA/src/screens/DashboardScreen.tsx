@@ -298,7 +298,7 @@ export default function DashboardScreen({ navigation }: any) {
                         <Text style={[styles.strictnessNote, { marginTop: 8, fontStyle: 'italic', color: '#08365eff' }]}>
                             🎯 {directive.moduleMessages.dashboard}
                         </Text>
-                        <Text style={[styles.strictnessNote, { marginTop: 4, fontStyle: 'italic', color: '#C4B5FD' }]}>
+                        <Text style={[styles.strictnessNote, { marginTop: 4, fontStyle: 'italic', color: '#6c47ffff' }]}>
                             🔥 {directive.moduleMessages.focus}
                         </Text>
                         {directive.recoveryFlag && (
