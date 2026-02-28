@@ -3,7 +3,7 @@
 // Shows: AFI gauge, CRS, focus time, goals, distractive apps, quick Pomodoro
 // ─────────────────────────────────────────────────────────────────────────────
 
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import {
     View,
     Text,
@@ -12,6 +12,8 @@ import {
     TouchableOpacity,
     Dimensions,
 } from 'react-native';
+import { useOrchestratorStore } from '../modules/agent/store/orchestratorStore';
+import NudgeOverlay from '../components/NudgeOverlay';
 import { useFocusStore } from '../modules/focusTrainer/store/focusStore';
 import { getUsageSessions, getDailyAppStats } from '../modules/focusTrainer/services/UsageStatsService';
 import { getHealthSignals } from '../modules/focusTrainer/services/HealthService';
@@ -38,6 +40,8 @@ export default function DashboardScreen({ navigation }: any) {
         setDistractiveApps,
     } = useFocusStore();
 
+    const { directive, contextMode, runOrchestration } = useOrchestratorStore();
+
     // ── Load data on mount ──────────────────────────────────────────────────
     const refreshData = useCallback(async () => {
         try {
@@ -62,6 +66,18 @@ export default function DashboardScreen({ navigation }: any) {
             const dailyStats = await getDailyAppStats(now);
             const dsResults = computeDistractivenessScores(dailyStats);
             setDistractiveApps(dsResults.filter(r => r.isDistractive));
+
+            // ── Run Orchestrator (HYBRID: Rules + Groq LLM) ─────────────
+            runOrchestration({
+                profile: null,
+                personalization: null,
+                healthRecord: null,
+                mss: 50,
+                currentAFI: afi.score,
+                meditationSessionCount: 0,
+                meditationTotalMinutes: 0,
+                meditationAvgRating: 3,
+            });
         } catch (err) {
             console.error('[Dashboard] Error refreshing:', err);
         }
@@ -70,6 +86,31 @@ export default function DashboardScreen({ navigation }: any) {
     useEffect(() => {
         refreshData();
     }, [refreshData]);
+
+    // ── Auto-Nudge Timer: re-run orchestrator every 60s for testing ────────
+    const nudgeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+    useEffect(() => {
+        nudgeTimerRef.current = setInterval(() => {
+            console.log('[Dashboard] ⏰ Auto-nudge timer fired — re-running orchestrator...');
+            runOrchestration({
+                profile: null,
+                personalization: null,
+                healthRecord: null,
+                mss: 50,
+                currentAFI: currentAFI?.score ?? 0.5,
+                meditationSessionCount: 0,
+                meditationTotalMinutes: 0,
+                meditationAvgRating: 3,
+            });
+        }, 60_000); // every 60 seconds
+
+        return () => {
+            if (nudgeTimerRef.current) {
+                clearInterval(nudgeTimerRef.current);
+            }
+        };
+    }, [currentAFI]);
 
     // ── AFI Color ───────────────────────────────────────────────────────────
     const getAFIColor = (level: string) => {
@@ -86,157 +127,186 @@ export default function DashboardScreen({ navigation }: any) {
     const crsScore = currentCRS?.score ?? 0.5;
 
     return (
-        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-            {/* ── Header ─────────────────────────────────────────────────────── */}
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>ASTRA</Text>
-                <Text style={styles.headerSubtitle}>Focus Trainer</Text>
-            </View>
-
-            {/* ── AFI Card ───────────────────────────────────────────────────── */}
-            <View style={[styles.card, styles.afiCard]}>
-                <Text style={styles.cardLabel}>Attention Fragmentation</Text>
-                <View style={styles.gaugeContainer}>
-                    <View style={styles.gaugeOuter}>
-                        <View
-                            style={[
-                                styles.gaugeInner,
-                                {
-                                    width: `${(1 - afiScore) * 100}%`,
-                                    backgroundColor: getAFIColor(afiLevel),
-                                },
-                            ]}
-                        />
-                    </View>
-                    <Text
-                        style={[styles.afiLevel, { color: getAFIColor(afiLevel) }]}
-                    >
-                        {afiLevel.toUpperCase()}
-                    </Text>
+        <>
+            <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+                {/* ── Header ─────────────────────────────────────────────────────── */}
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>ASTRA</Text>
+                    <Text style={styles.headerSubtitle}>Focus Trainer</Text>
                 </View>
-                <Text style={styles.scoreText}>
-                    {(afiScore * 100).toFixed(0)}% fragmented
-                </Text>
-            </View>
 
-            {/* ── CRS Card ───────────────────────────────────────────────────── */}
-            <View style={[styles.card, styles.crsCard]}>
-                <Text style={styles.cardLabel}>Cognitive Readiness</Text>
-                <Text style={styles.crsScore}>
-                    {(crsScore * 100).toFixed(0)}%
-                </Text>
-                {currentCRS && (
-                    <Text style={styles.crsRecommendation}>
-                        {getCRSSuggestion(currentCRS)}
-                    </Text>
-                )}
-            </View>
-
-            {/* ── Quick Actions ──────────────────────────────────────────────── */}
-            <View style={styles.actionsRow}>
-                <TouchableOpacity
-                    style={[styles.actionBtn, styles.focusBtn]}
-                    onPress={() => navigation.navigate('FocusSession')}
-                >
-                    <Text style={styles.actionIcon}>🎯</Text>
-                    <Text style={styles.actionText}>
-                        {isInFocusSession ? 'Resume' : 'Focus'}
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.actionBtn, styles.trainBtn]}
-                    onPress={() => navigation.navigate('Training')}
-                >
-                    <Text style={styles.actionIcon}>🧠</Text>
-                    <Text style={styles.actionText}>Train</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                    style={[styles.actionBtn, styles.analyticsBtn]}
-                    onPress={() => navigation.navigate('Heatmap')}
-                >
-                    <Text style={styles.actionIcon}>📊</Text>
-                    <Text style={styles.actionText}>Analytics</Text>
-                </TouchableOpacity>
-            </View>
-
-            {/* ── Today's Stats ──────────────────────────────────────────────── */}
-            <View style={styles.card}>
-                <Text style={styles.cardLabel}>Today</Text>
-                <View style={styles.statsRow}>
-                    <View style={styles.statItem}>
-                        <Text style={styles.statValue}>{completedSessionsToday}</Text>
-                        <Text style={styles.statLabel}>Sessions</Text>
-                    </View>
-                    <View style={styles.statItem}>
-                        <Text style={styles.statValue}>
-                            {currentAFI?.switchesPerHour.toFixed(0) ?? '—'}
-                        </Text>
-                        <Text style={styles.statLabel}>Switches/hr</Text>
-                    </View>
-                    <View style={styles.statItem}>
-                        <Text style={styles.statValue}>
-                            {currentAFI?.unlocksPerHour.toFixed(0) ?? '—'}
-                        </Text>
-                        <Text style={styles.statLabel}>Unlocks/hr</Text>
-                    </View>
-                </View>
-            </View>
-
-            {/* ── Active Goal ────────────────────────────────────────────────── */}
-            {activeGoal && (
-                <View style={[styles.card, styles.goalCard]}>
-                    <Text style={styles.cardLabel}>Active Goal</Text>
-                    <Text style={styles.goalTitle}>{activeGoal.title}</Text>
-                    <View style={styles.importanceBar}>
-                        <View
-                            style={[
-                                styles.importanceFill,
-                                { width: `${activeGoal.importance * 100}%` },
-                            ]}
-                        />
-                    </View>
-                </View>
-            )}
-
-            {/* ── Distractive Apps ───────────────────────────────────────────── */}
-            {distractiveApps.length > 0 && (
-                <View style={styles.card}>
-                    <Text style={styles.cardLabel}>⚠️ Distractive Apps</Text>
-                    {distractiveApps.slice(0, 5).map((app, i) => (
-                        <View key={i} style={styles.appRow}>
-                            <Text style={styles.appName}>{app.appName}</Text>
-                            <View style={styles.dsBar}>
-                                <View
-                                    style={[
-                                        styles.dsFill,
-                                        { width: `${app.score * 100}%` },
-                                    ]}
-                                />
-                            </View>
-                            <Text style={styles.dsScore}>
-                                {(app.score * 100).toFixed(0)}%
-                            </Text>
+                {/* ── AFI Card ───────────────────────────────────────────────────── */}
+                <View style={[styles.card, styles.afiCard]}>
+                    <Text style={styles.cardLabel}>Attention Fragmentation</Text>
+                    <View style={styles.gaugeContainer}>
+                        <View style={styles.gaugeOuter}>
+                            <View
+                                style={[
+                                    styles.gaugeInner,
+                                    {
+                                        width: `${(1 - afiScore) * 100}%`,
+                                        backgroundColor: getAFIColor(afiLevel),
+                                    },
+                                ]}
+                            />
                         </View>
-                    ))}
+                        <Text
+                            style={[styles.afiLevel, { color: getAFIColor(afiLevel) }]}
+                        >
+                            {afiLevel.toUpperCase()}
+                        </Text>
+                    </View>
+                    <Text style={styles.scoreText}>
+                        {(afiScore * 100).toFixed(0)}% fragmented
+                    </Text>
                 </View>
-            )}
 
-            {/* ── Strictness Info ────────────────────────────────────────────── */}
-            {currentStrictness && (
-                <View style={styles.card}>
-                    <Text style={styles.cardLabel}>Blocking Level</Text>
-                    <Text style={styles.strictnessLabel}>
-                        {currentStrictness.label.replace(/-/g, ' ').toUpperCase()}
+                {/* ── CRS Card ───────────────────────────────────────────────────── */}
+                <View style={[styles.card, styles.crsCard]}>
+                    <Text style={styles.cardLabel}>Cognitive Readiness</Text>
+                    <Text style={styles.crsScore}>
+                        {(crsScore * 100).toFixed(0)}%
                     </Text>
-                    <Text style={styles.strictnessNote}>
-                        Level {currentStrictness.recommendedLevel} •{' '}
-                        Impulsivity: {(currentStrictness.impulsivityIndex * 100).toFixed(0)}%
-                    </Text>
+                    {currentCRS && (
+                        <Text style={styles.crsRecommendation}>
+                            {getCRSSuggestion(currentCRS)}
+                        </Text>
+                    )}
                 </View>
-            )}
-        </ScrollView>
+
+                {/* ── Quick Actions ──────────────────────────────────────────────── */}
+                <View style={styles.actionsRow}>
+                    <TouchableOpacity
+                        style={[styles.actionBtn, styles.focusBtn]}
+                        onPress={() => navigation.navigate('FocusSession')}
+                    >
+                        <Text style={styles.actionIcon}>🎯</Text>
+                        <Text style={styles.actionText}>
+                            {isInFocusSession ? 'Resume' : 'Focus'}
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.actionBtn, styles.trainBtn]}
+                        onPress={() => navigation.navigate('Training')}
+                    >
+                        <Text style={styles.actionIcon}>🧠</Text>
+                        <Text style={styles.actionText}>Train</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.actionBtn, styles.analyticsBtn]}
+                        onPress={() => navigation.navigate('Heatmap')}
+                    >
+                        <Text style={styles.actionIcon}>📊</Text>
+                        <Text style={styles.actionText}>Analytics</Text>
+                    </TouchableOpacity>
+                </View>
+
+                {/* ── Today's Stats ──────────────────────────────────────────────── */}
+                <View style={styles.card}>
+                    <Text style={styles.cardLabel}>Today</Text>
+                    <View style={styles.statsRow}>
+                        <View style={styles.statItem}>
+                            <Text style={styles.statValue}>{completedSessionsToday}</Text>
+                            <Text style={styles.statLabel}>Sessions</Text>
+                        </View>
+                        <View style={styles.statItem}>
+                            <Text style={styles.statValue}>
+                                {currentAFI?.switchesPerHour.toFixed(0) ?? '—'}
+                            </Text>
+                            <Text style={styles.statLabel}>Switches/hr</Text>
+                        </View>
+                        <View style={styles.statItem}>
+                            <Text style={styles.statValue}>
+                                {currentAFI?.unlocksPerHour.toFixed(0) ?? '—'}
+                            </Text>
+                            <Text style={styles.statLabel}>Unlocks/hr</Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* ── Active Goal ────────────────────────────────────────────────── */}
+                {activeGoal && (
+                    <View style={[styles.card, styles.goalCard]}>
+                        <Text style={styles.cardLabel}>Active Goal</Text>
+                        <Text style={styles.goalTitle}>{activeGoal.title}</Text>
+                        <View style={styles.importanceBar}>
+                            <View
+                                style={[
+                                    styles.importanceFill,
+                                    { width: `${activeGoal.importance * 100}%` },
+                                ]}
+                            />
+                        </View>
+                    </View>
+                )}
+
+                {/* ── Distractive Apps ───────────────────────────────────────────── */}
+                {distractiveApps.length > 0 && (
+                    <View style={styles.card}>
+                        <Text style={styles.cardLabel}>⚠️ Distractive Apps</Text>
+                        {distractiveApps.slice(0, 5).map((app, i) => (
+                            <View key={i} style={styles.appRow}>
+                                <Text style={styles.appName}>{app.appName}</Text>
+                                <View style={styles.dsBar}>
+                                    <View
+                                        style={[
+                                            styles.dsFill,
+                                            { width: `${app.score * 100}%` },
+                                        ]}
+                                    />
+                                </View>
+                                <Text style={styles.dsScore}>
+                                    {(app.score * 100).toFixed(0)}%
+                                </Text>
+                            </View>
+                        ))}
+                    </View>
+                )}
+
+                {/* ── Strictness Info ────────────────────────────────────────────── */}
+                {currentStrictness && (
+                    <View style={styles.card}>
+                        <Text style={styles.cardLabel}>Blocking Level</Text>
+                        <Text style={styles.strictnessLabel}>
+                            {currentStrictness.label.replace(/-/g, ' ').toUpperCase()}
+                        </Text>
+                        <Text style={styles.strictnessNote}>
+                            Level {currentStrictness.recommendedLevel} •{' '}
+                            Impulsivity: {(currentStrictness.impulsivityIndex * 100).toFixed(0)}%
+                        </Text>
+                    </View>
+                )}
+
+                {/* ── ASTRA Context State ─────────────────────────────────── */}
+                {directive && (
+                    <View style={[styles.card, { borderLeftWidth: 3, borderLeftColor: '#A855F7' }]}>
+                        <Text style={styles.cardLabel}>🧠 ASTRA Intelligence</Text>
+                        <Text style={[styles.strictnessLabel, { fontSize: 16 }]}>
+                            {directive.contextState.mode.replace(/-/g, ' ').toUpperCase()}
+                        </Text>
+                        <Text style={[styles.strictnessNote, { marginTop: 6 }]}>
+                            Gap: {directive.behavioralGap.level} • Tone: {directive.tone} • Source: {directive.source}
+                        </Text>
+                        <Text style={[styles.strictnessNote, { marginTop: 8, fontStyle: 'italic', color: '#E6EDF3' }]}>
+                            🎯 {directive.moduleMessages.dashboard}
+                        </Text>
+                        <Text style={[styles.strictnessNote, { marginTop: 4, fontStyle: 'italic', color: '#C4B5FD' }]}>
+                            🔥 {directive.moduleMessages.focus}
+                        </Text>
+                        {directive.recoveryFlag && (
+                            <Text style={[styles.strictnessNote, { marginTop: 4, color: '#F59E0B' }]}>
+                                ⚠️ Recovery: {directive.recoveryAction}
+                            </Text>
+                        )}
+                    </View>
+                )}
+            </ScrollView>
+
+            {/* ── Nudge Overlay ────────────────────────────────────────── */}
+            <NudgeOverlay onNavigate={(screen) => navigation.navigate(screen)} />
+        </>
     );
 }
 

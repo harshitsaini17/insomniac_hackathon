@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { useOrchestratorStore } from '../modules/agent/store/orchestratorStore';
 import { useHealthStore } from '@/store/health-store';
 import { getHydrationTarget } from '@/engine/health-normalizers';
 import { RULE_LOW_HYDRATION_RATIO } from '@/constants/health-constants';
@@ -25,6 +26,7 @@ export default function HealthScreen() {
     const latestRecord = useHealthStore((s) => s.getLatestRecord());
     const last7 = useHealthStore((s) => s.getRecordsForDays(7));
     const last14 = useHealthStore((s) => s.getRecordsForDays(14));
+    const directive = useOrchestratorStore((s) => s.directive);
 
     const today = new Date().toISOString().slice(0, 10);
     const hasToday = latestRecord?.input.date === today;
@@ -57,6 +59,23 @@ export default function HealthScreen() {
                         <Text style={styles.emptySubtitle}>
                             Tap the button below to log your first day
                         </Text>
+                    </View>
+                )}
+
+                {/* ASTRA Insight */}
+                {directive && (
+                    <View style={styles.astraBanner}>
+                        <Text style={styles.astraIcon}>
+                            {directive.recoveryFlag ? '⚠️' : '✨'}
+                        </Text>
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.astraTitle}>
+                                ASTRA • {directive.contextState.mode.replace(/-/g, ' ')}
+                            </Text>
+                            <Text style={styles.astraSubtitle}>
+                                {directive.moduleMessages.health}
+                            </Text>
+                        </View>
                     </View>
                 )}
 
@@ -193,5 +212,29 @@ const styles = StyleSheet.create({
         color: '#FFF',
         fontSize: 16,
         fontWeight: '700',
+    },
+    astraBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#FEF3C7',
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: '#FDE68A',
+    },
+    astraIcon: {
+        fontSize: 28,
+        marginRight: 12,
+    },
+    astraTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#92400E',
+    },
+    astraSubtitle: {
+        fontSize: 12,
+        color: '#B45309',
+        marginTop: 2,
     },
 });
