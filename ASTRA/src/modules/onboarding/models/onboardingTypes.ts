@@ -67,6 +67,7 @@ export interface OnboardingAnswers {
     emotionalStateAfterDistraction: string;
     idealFutureSelf: string;
     selfIdentifiedWeakness: string;
+    personalRelationshipGoal: string;  // e.g. "I want to become more confident to find a girlfriend"
 }
 
 // ── NLP Analysis Result ──────────────────────────────────────────────────────
@@ -130,6 +131,9 @@ export interface UserProfile {
     goalUrgencyScore: number;              // 0–1
     goalText: string;
 
+    // Personal / Relationship Goal (for taunting personalization)
+    relationshipGoal: string;              // raw text from onboarding
+
     // Emotional & Self-efficacy
     emotionalReactivityScore: number;      // 0–1
     selfEfficacyScore: number;             // 0–1
@@ -172,6 +176,7 @@ export type OnboardingStep =
     | 'open_emotion'
     | 'open_future_self'
     | 'open_weakness'
+    | 'open_relationship'  // personal/relationship goals
     | 'summary';
 
 export const ONBOARDING_STEPS: OnboardingStep[] = [
@@ -184,5 +189,6 @@ export const ONBOARDING_STEPS: OnboardingStep[] = [
     'open_emotion',
     'open_future_self',
     'open_weakness',
+    'open_relationship',
     'summary',
 ];

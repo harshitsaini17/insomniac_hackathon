@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useOrchestratorStore } from '../modules/agent/store/orchestratorStore';
 import { useMeditationStore } from '@/store/meditation-store';
 import { useHealthStore } from '@/store/health-store';
 import { useUserStore } from '@/store/user-store';
@@ -26,6 +27,7 @@ export default function MeditateScreen() {
     const profile = useUserStore((s) => s.profile);
     const { getSessionCount, getTotalMinutes, getAverageRating } = useMeditationStore();
     const summary = useMeditationStore((s) => s.getMeditationSummary(7));
+    const directive = useOrchestratorStore((s) => s.directive);
 
     // Build a live DailyMeditationInput from current health + UI selections
     const meditationInput: DailyMeditationInput = useMemo(() => ({
@@ -60,6 +62,23 @@ export default function MeditateScreen() {
             {/* Header */}
             <Text style={styles.headerCaption}>MINDFULNESS</Text>
             <Text style={styles.headerTitle}>Meditate</Text>
+
+            {/* ASTRA Suggestion */}
+            {directive && (
+                <View style={styles.astraBanner}>
+                    <Text style={styles.astraIcon}>
+                        {directive.recoveryFlag ? '🌿' : '🧠'}
+                    </Text>
+                    <View style={{ flex: 1 }}>
+                        <Text style={styles.astraTitle}>
+                            ASTRA • {directive.meditationType} • {directive.meditationDuration} min
+                        </Text>
+                        <Text style={styles.astraSubtitle}>
+                            {directive.moduleMessages.meditation}
+                        </Text>
+                    </View>
+                </View>
+            )}
 
             {/* MSS Badge */}
             <MSSBadge score={computed.MSS} />
@@ -191,5 +210,29 @@ const styles = StyleSheet.create({
     },
     sessionList: {
         gap: 10,
+    },
+    astraBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#F5F3FF',
+        borderRadius: 12,
+        padding: 14,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: '#E9E5FF',
+    },
+    astraIcon: {
+        fontSize: 28,
+        marginRight: 12,
+    },
+    astraTitle: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#5B21B6',
+    },
+    astraSubtitle: {
+        fontSize: 12,
+        color: '#7C3AED',
+        marginTop: 2,
     },
 });
