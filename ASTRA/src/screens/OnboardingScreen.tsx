@@ -288,6 +288,7 @@ function renderStep(
         case 'open_goal':
         case 'open_distraction':
         case 'open_emotion':
+        case 'open_relationship':
         case 'open_future_self':
         case 'open_weakness':
             return (
