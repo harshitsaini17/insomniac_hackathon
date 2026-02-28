@@ -29,6 +29,8 @@ export interface FocusScore {
 // ─── Meditation Module ───
 export type MeditationType = 'mindfulness' | 'body-scan' | 'breathing' | 'yoga-nidra';
 export type SessionPhase = 'preparation' | 'core' | 'reflection';
+export type MeditationIntent = 'focus' | 'calm' | 'sleep' | 'recovery' | 'energy';
+export type ExperienceLevel = 'novice' | 'intermediate' | 'advanced';
 
 export interface MeditationSession {
     id: string;
@@ -36,6 +38,77 @@ export interface MeditationSession {
     duration: number;
     completedAt: number;
     rating: 1 | 2 | 3 | 4 | 5;
+    intent?: MeditationIntent;
+    pre_hrv?: number;
+    post_hrv?: number;
+}
+
+/** Manual input for meditation suitability computation. */
+export interface DailyMeditationInput {
+    date: string;
+    stress_level: number;        // 1..5
+    fatigue_level: number;       // 1..5
+    mood: number;                // 1..5
+    available_minutes: number;   // how many minutes user has
+    experience_level: ExperienceLevel;
+    intent: MeditationIntent;
+    hrv_rmssd_ms?: number;       // optional HRV
+    pre_session_hrv?: number;    // optional pre-session HRV
+}
+
+/** All computed scores from a meditation input. */
+export interface ComputedMeditationScores {
+    RelaxationReadiness: number;
+    ActivationReadiness: number;
+    MSS: number;                  // Meditation Suitability Score 0–100
+    recommended_type: MeditationType;
+    recommended_duration: number; // minutes
+    prep_seconds: number;
+    core_seconds: number;
+    attention_boost_est: number;
+    flags: MeditationFlag[];
+}
+
+/** A flag surfaced in the Meditate tab UI. */
+export interface MeditationFlag {
+    id: string;
+    label: string;
+    type: 'info' | 'warning' | 'boost';
+}
+
+/** Full session recording with efficacy data. */
+export interface MeditationSessionRecord {
+    id: string;
+    date: string;
+    type: MeditationType;
+    intent: MeditationIntent;
+    duration_seconds: number;
+    completed: boolean;
+    rating: 1 | 2 | 3 | 4 | 5;
+    pre_hrv?: number;
+    post_hrv?: number;
+    efficacy_marked?: boolean;
+    mss_at_time?: number;
+}
+
+/** Day record combining input + computed + sessions. */
+export interface MeditationDayRecord {
+    input: DailyMeditationInput;
+    computed: ComputedMeditationScores;
+    sessions: MeditationSessionRecord[];
+}
+
+/** Priority-ordered meditation rule. */
+export interface MeditationRule {
+    id: string;
+    name: string;
+    priority: number;
+    evaluate: (input: DailyMeditationInput, computed: ComputedMeditationScores, todaySessions: MeditationSessionRecord[]) => {
+        typeOverride?: MeditationType;
+        durationOverride?: number;
+        flag?: MeditationFlag;
+        mssAdjust?: number;
+    } | null;
 }
 
 export const MEDITATION_LABELS: Record<MeditationType, string> = {

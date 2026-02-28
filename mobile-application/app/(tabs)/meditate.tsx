@@ -1,63 +1,69 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { SessionCard } from '@/components/meditate/SessionCard';
-import { DurationPicker } from '@/components/meditate/DurationPicker';
 import { useMeditationStore } from '@/store/meditation-store';
 import { useHealthStore } from '@/store/health-store';
 import { useUserStore } from '@/store/user-store';
-import { evaluateRules } from '@/engine/rule-engine';
-import { meditationRules } from '@/engine/meditation-rules';
-import type { MeditationType, RuleContext, DailyHealthInput } from '@/types';
+import { computeFullScores } from '@/engine/meditation-scores';
+import type { MeditationType, MeditationIntent, DailyMeditationInput, ExperienceLevel } from '@/types';
 
-const DEFAULT_HEALTH: DailyHealthInput = {
-    date: new Date().toISOString().slice(0, 10),
-    sleep_hours: 7,
-    sleep_quality: 3,
-    sleep_disturbances: 0,
-    exercise_minutes: 20,
-    sedentary_hours: 4,
-    water_ml: 1500,
-    stress_level: 2,
-    fatigue_level: 2,
-};
+// Components
+import { MSSBadge } from '@/components/meditate/MSSBadge';
+import { RecommendedSessionCard } from '@/components/meditate/RecommendedSessionCard';
+import { IntentPicker } from '@/components/meditate/IntentPicker';
+import { DurationPicker } from '@/components/meditate/DurationPicker';
+import { MSSChart } from '@/components/meditate/MSSChart';
+import { RatingSparkline } from '@/components/meditate/RatingSparkline';
+import { HRVScatter } from '@/components/meditate/HRVScatter';
+import { TimeSpentBar } from '@/components/meditate/TimeSpentBar';
+import { SessionCard } from '@/components/meditate/SessionCard';
 
 export default function MeditateScreen() {
     const router = useRouter();
+    const [intent, setIntent] = useState<MeditationIntent>('calm');
     const [duration, setDuration] = useState(10);
-    const { sessions, getAverageRating, getSessionCount, getTotalMinutes } = useMeditationStore();
-    const latestRecord = useHealthStore((s) => s.getLatestRecord());
-    const healthRecords = useHealthStore((s) => s.getRecordsForDays(30));
-    const health = latestRecord?.input ?? DEFAULT_HEALTH;
+
+    const latestHealthRecord = useHealthStore((s) => s.getLatestRecord());
     const profile = useUserStore((s) => s.profile);
+    const { getSessionCount, getTotalMinutes, getAverageRating } = useMeditationStore();
+    const summary = useMeditationStore((s) => s.getMeditationSummary(7));
 
-    const recommendations = useMemo(() => {
-        const ctx: RuleContext = {
-            user: profile,
-            health,
-            healthRecords,
-            focusSessions: [],
-            meditationSessions: sessions,
-        };
-        return evaluateRules(meditationRules, ctx);
-    }, [profile, health, healthRecords, sessions]);
+    // Build a live DailyMeditationInput from current health + UI selections
+    const meditationInput: DailyMeditationInput = useMemo(() => ({
+        date: new Date().toISOString().slice(0, 10),
+        stress_level: latestHealthRecord?.input.stress_level ?? 2,
+        fatigue_level: latestHealthRecord?.input.fatigue_level ?? 2,
+        mood: 3,
+        available_minutes: duration,
+        experience_level: (getSessionCount() > 20
+            ? 'advanced'
+            : getSessionCount() > 5
+                ? 'intermediate'
+                : 'novice') as ExperienceLevel,
+        intent,
+        hrv_rmssd_ms: latestHealthRecord?.input.hrv_rmssd_ms,
+    }), [intent, duration, latestHealthRecord, getSessionCount]);
 
-    // Determine recommended type from engine
-    const recommendedType: MeditationType | null = useMemo(() => {
-        const medRec = recommendations.find((r) => r.type === 'meditation' || r.type === 'recovery');
-        if (!medRec) return null;
-        if (medRec.triggeredBy.includes('breathing')) return 'breathing';
-        if (medRec.triggeredBy.includes('yoga-nidra')) return 'yoga-nidra';
-        if (medRec.triggeredBy.includes('mindfulness')) return 'mindfulness';
-        if (medRec.triggeredBy.includes('body-scan')) return 'body-scan';
-        return null;
-    }, [recommendations]);
+    // Compute MSS live
+    const computed = useMemo(
+        () => computeFullScores(meditationInput, profile),
+        [meditationInput, profile]
+    );
+
+    const handleStartSession = useCallback(() => {
+        router.push(
+            `/meditate/session?type=${computed.recommended_type}&duration=${computed.recommended_duration}` as any
+        );
+    }, [computed, router]);
 
     const types: MeditationType[] = ['mindfulness', 'body-scan', 'breathing', 'yoga-nidra'];
 
     return (
         <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-            {/* Stats */}
+            {/* MSS Badge */}
+            <MSSBadge score={computed.MSS} />
+
+            {/* Stats Row */}
             <View style={styles.statsRow}>
                 <View style={styles.stat}>
                     <Text style={styles.statValue}>{getSessionCount()}</Text>
@@ -75,19 +81,44 @@ export default function MeditateScreen() {
                 </View>
             </View>
 
-            {/* Duration Picker */}
+            {/* Intent Picker */}
+            <IntentPicker selected={intent} onSelect={setIntent} />
+
+            {/* Time Slider */}
             <DurationPicker selected={duration} onSelect={setDuration} />
 
-            {/* Session Types */}
-            <Text style={styles.sectionTitle}>Choose Practice</Text>
+            {/* Recommended Session CTA */}
+            <RecommendedSessionCard
+                type={computed.recommended_type}
+                duration={computed.recommended_duration}
+                attentionBoost={computed.attention_boost_est}
+                flags={computed.flags}
+                onStart={handleStartSession}
+            />
+
+            {/* 7-day MSS Chart */}
+            <MSSChart data={summary.mssHistory} />
+
+            {/* Ratings + HRV row */}
+            <View style={styles.twoCol}>
+                <RatingSparkline data={summary.ratingHistory} />
+                <View style={{ width: 10 }} />
+                <HRVScatter data={summary.hrvDelta} />
+            </View>
+
+            {/* Time Spent */}
+            <TimeSpentBar data={summary.timeSpent} />
+
+            {/* All Session Types */}
+            <Text style={styles.sectionTitle}>All Practices</Text>
             <View style={styles.sessionList}>
                 {types.map((type) => (
                     <SessionCard
                         key={type}
                         type={type}
-                        recommended={type === recommendedType}
+                        recommended={type === computed.recommended_type}
                         onPress={() =>
-                            router.push(`/meditate/session?type=${type}&duration=${duration}`)
+                            router.push(`/meditate/session?type=${type}&duration=${duration}` as any)
                         }
                     />
                 ))}
@@ -112,7 +143,7 @@ const styles = StyleSheet.create({
         padding: 16,
         borderWidth: 1,
         borderColor: '#F0F0F0',
-        marginBottom: 24,
+        marginBottom: 16,
     },
     stat: {
         flex: 1,
@@ -134,11 +165,15 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
         letterSpacing: 0.5,
     },
+    twoCol: {
+        flexDirection: 'row',
+    },
     sectionTitle: {
         fontSize: 16,
         fontWeight: '600',
         color: '#1A1A1A',
         marginBottom: 12,
+        marginTop: 4,
     },
     sessionList: {
         gap: 10,

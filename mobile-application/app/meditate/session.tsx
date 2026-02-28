@@ -24,7 +24,7 @@ export default function MeditationSessionScreen() {
         duration: string;
     }>();
     const router = useRouter();
-    const { addSession } = useMeditationStore();
+    const { recordSession } = useMeditationStore();
 
     const totalSeconds = parseInt(duration, 10) * 60;
     const prepTime = 30;
@@ -79,28 +79,32 @@ export default function MeditationSessionScreen() {
 
     const handleRating = useCallback(
         (rating: 1 | 2 | 3 | 4 | 5) => {
-            addSession({
+            recordSession({
+                date: new Date().toISOString().slice(0, 10),
                 type: type as MeditationType,
-                duration: totalSeconds,
-                completedAt: Date.now(),
+                intent: 'calm',
+                duration_seconds: totalSeconds,
+                completed: true,
                 rating,
             });
             setShowRating(false);
             router.back();
         },
-        [type, totalSeconds, addSession, router],
+        [type, totalSeconds, recordSession, router],
     );
 
     const handleSkipRating = useCallback(() => {
-        addSession({
+        recordSession({
+            date: new Date().toISOString().slice(0, 10),
             type: type as MeditationType,
-            duration: totalSeconds,
-            completedAt: Date.now(),
+            intent: 'calm',
+            duration_seconds: totalSeconds,
+            completed: true,
             rating: 3,
         });
         setShowRating(false);
         router.back();
-    }, [type, totalSeconds, addSession, router]);
+    }, [type, totalSeconds, recordSession, router]);
 
     const minutes = Math.floor(remaining / 60);
     const seconds = remaining % 60;
