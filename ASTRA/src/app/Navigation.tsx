@@ -10,6 +10,8 @@ import FocusSessionScreen from '../screens/FocusSessionScreen';
 import CognitiveTrainingScreen from '../screens/CognitiveTrainingScreen';
 import HeatmapScreen from '../screens/HeatmapScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import HealthScreen from '../screens/HealthScreen';
+import MeditateScreen from '../screens/MeditateScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -54,12 +56,22 @@ export default function Navigation() {
                 }}
             />
             <Tab.Screen
-                name="Heatmap"
-                component={HeatmapScreen}
+                name="Meditate"
+                component={MeditateScreen}
                 options={{
-                    tabBarLabel: 'Analytics',
+                    tabBarLabel: 'Meditate',
                     tabBarIcon: ({ focused }) => (
-                        <Text style={styles.tabIcon}>{focused ? '📊' : '📊'}</Text>
+                        <Text style={styles.tabIcon}>{focused ? '🧘' : '🧘'}</Text>
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="Health"
+                component={HealthScreen}
+                options={{
+                    tabBarLabel: 'Health',
+                    tabBarIcon: ({ focused }) => (
+                        <Text style={styles.tabIcon}>{focused ? '❤️' : '❤️'}</Text>
                     ),
                 }}
             />
